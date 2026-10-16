@@ -21,18 +21,18 @@
 :root{
   --bg:#F7F9FC; --dot:#E3E8F0; --surface:#FFFFFF; --surface2:#F5F7FA; --ink:#262A33; --muted:#6B7280; --line:#D8DFE9; --shadowc:#E3E9F1;
   --soft:#E9EEF4; --pop:#FF3D7F; --pop-ink:#FFFFFF; --sun:#FFC23D; --good:#10A877; --good-bg:#E2F7EF; --bad:#E8434F; --bad-bg:#FDE8EA;
-  --t1:#21B04F; --t2:#6A3BE0; --t3:#1877F4; --t4:#F0602F; --t5:#11A389; --t6:#9A2F72; --t7:#E9A800; --t8:#E2609E;
+  --t0:#0A9CC2; --t1:#21B04F; --t2:#6A3BE0; --t3:#1877F4; --t4:#F0602F; --t5:#11A389; --t6:#9A2F72; --t7:#E9A800; --t8:#E2609E;
   --shadow:0 4px 0 var(--shadowc),0 8px 24px rgba(38,52,77,.06); --shadow-sm:0 2px 0 var(--shadowc);
   --f-display:'Unbounded','Nunito',system-ui,sans-serif; --f-body:'Nunito',system-ui,sans-serif; --f-jp:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
 }
 @media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
   --bg:#15181F; --dot:#252A34; --surface:#1F232C; --surface2:#262B35; --ink:#EEF1F6; --muted:#A3ABB9; --line:#363D4A; --shadowc:#0E1116;
   --soft:#313744; --pop:#FF5C93; --pop-ink:#1A0610; --sun:#FFCB55; --good:#3DD6A0; --good-bg:#15362D; --bad:#FF6B74; --bad-bg:#3E2228;
-  --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}}
+  --t0:#33BFE3; --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}}
 :root[data-theme="dark"]{
   --bg:#15181F; --dot:#252A34; --surface:#1F232C; --surface2:#262B35; --ink:#EEF1F6; --muted:#A3ABB9; --line:#363D4A; --shadowc:#0E1116;
   --soft:#313744; --pop:#FF5C93; --pop-ink:#1A0610; --sun:#FFCB55; --good:#3DD6A0; --good-bg:#15362D; --bad:#FF6B74; --bad-bg:#3E2228;
-  --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}
+  --t0:#33BFE3; --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}
 *{box-sizing:border-box}
 html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 html,body{min-height:100%}
@@ -84,7 +84,7 @@ h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;lett
 .label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
 
 /* table picker */
-.tables{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:34px}
+.tables{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-bottom:34px}
 .tcard{--c:var(--t1);position:relative;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:30px 14px 14px;box-shadow:var(--shadow);transition:transform .12s;display:flex;flex-direction:column;gap:8px;min-width:0}
 .tcard:hover{transform:translateY(-2px)}
 .tcard:active{transform:translateY(3px);box-shadow:none}
@@ -264,7 +264,7 @@ h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;lett
 #toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:800;transition:.25s;z-index:60;pointer-events:none;max-width:calc(100% - 32px)}
 #toast.on{opacity:1;transform:translate(-50%,0)}
 
-@media (max-width:860px){.tables,.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.scards,.plist{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.tables,.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.tables .tcard:first-child{grid-column:1/-1}.scards,.plist{grid-template-columns:minmax(0,1fr)}}
 @media (max-width:520px){
   .hero{grid-template-columns:1fr;text-align:left;padding:18px}.hero .mascot{width:84px;height:84px}
   .tables{gap:12px}.tcard{padding:28px 12px 12px}.tcard .words{font-size:13.5px}
@@ -287,7 +287,13 @@ h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;lett
   .brand b{font-size:14px;white-space:nowrap;line-height:1.2}.brand small{display:none}
   .pill{white-space:nowrap}
   .sechead p{display:none}
-  .top{justify-content:space-between}
+  .top{justify-content:space-between;flex-wrap:wrap}
+  .top>.pill,.top>.iconbtn{flex:none}
+  .top>.brand{flex:1 1 0;min-width:0;overflow:hidden}
+  .brand b{overflow:hidden;text-overflow:ellipsis}
+  .inst{order:10;width:100%;justify-content:center;padding:9px 12px;font-size:14px}
+  .inst::before{content:'＋ ';font-weight:900}
+  .inst::after{content:' на телефон'}
   .pill{padding:4px 9px;font-size:12.5px;gap:4px}
   .long{display:none}.short{display:inline}
   .iconbtn{width:34px;height:34px;border-radius:10px}.iconbtn svg{width:18px;height:18px}.iconbtn .jp{font-size:11px}
@@ -331,7 +337,7 @@ h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;lett
 <body>
 <div class="wrap">
   <header class="top">
-    <button class="brand" id="home" aria-label="На главную"><span class="stamp"><ruby>副<rt>ふく</rt></ruby></span><b><span class="jp">ふくしどうじょう</span><small>fukushi dōjō</small></b></button>
+    <button class="brand" id="home" aria-label="На главную"><span class="stamp"><ruby>副<rt>ふく</rt></ruby></span><b><span class="jp long">ふくしどうじょう</span><span class="jp short">ふくし</span><small>fukushi dōjō</small></b></button>
     <span class="pill" id="xp" title="Очки опыта"></span>
     <span class="pill" id="streak" title="Дни подряд"></span>
     <button class="pill inst" id="instBtn" hidden>Установить</button>
@@ -348,6 +354,7 @@ h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;lett
 // Token format: tokens split by spaces. 漢字[よみ] → ruby. "**" = slot (default form of the adverb), "*форма*" = slot with a specific form.
 // Example line: "jp|ru|alt-ids(comma)"; a leading "!" marks an example taken from the board.
 const TABLES = [
+  {n:0, name:'Как часто?', sub:'Частота: всегда, часто, иногда, совсем не'},
   {n:1, name:'Насколько?', sub:'Степень: очень, немного, больше'},
   {n:2, name:'Степень и перемены', sub:'Довольно, не так уж, постепенно'},
   {n:3, name:'Как именно?', sub:'Образ действия'},
@@ -359,6 +366,77 @@ const TABLES = [
 ];
 
 const CARDS = [
+// ---------- 0: frequency (shown first) ----------
+{id:'itsumo',t:0,w:'いつも',ru:'всегда, постоянно',
+ note:'«Всегда» (≈ 100%). いつもの＋сущ. — «обычный, привычный»: いつもの店[みせ] — «наше обычное место».',
+ vs:['yoku','taitei'],
+ ex:[
+ '朝[あさ] は ** コーヒー を 飲[の]みます 。|Утром я всегда пью кофе.',
+ '田中[たなか] さん は ** 元気[げんき] です ね 。|Танака-сан всегда бодрый, правда?',
+ '兄[あに] は ** 遅[おく]れて 来[き]ます 。|Старший брат всегда приходит с опозданием.',
+ '** 7時[じ] に 起[お]きます 。|Я всегда встаю в семь.',
+ '週末[しゅうまつ] は ** 家族[かぞく] と 晩[ばん]ご飯[はん] を 食[た]べます 。|По выходным я всегда ужинаю с семьёй.',
+ '*いつもの* 店[みせ] で 会[あ]いましょう 。|Давай встретимся в нашем обычном месте.',
+ '** ありがとう ございます 。|Всегда вам спасибо!'
+ ]},
+{id:'yoku',t:0,w:'よく',ru:'часто; хорошо',
+ note:'① «Часто» (≈ 70%). ② «Хорошо, как следует»: よく分[わ]かる — «хорошо понимаю», よく寝[ね]た — «хорошо выспался».',
+ vs:['itsumo','tokidoki'],
+ ex:[
+ 'この 店[みせ] に ** 来[き]ます 。|Я часто прихожу в это кафе.',
+ '子供[こども] の 時[とき] 、 ** 公園[こうえん] で 遊[あそ]びました 。|В детстве я часто играл в парке.',
+ '日本[にほん] の アニメ を ** 見[み]ます 。|Я часто смотрю японское аниме.',
+ '冬[ふゆ] は ** 雪[ゆき] が 降[ふ]ります 。|Зимой часто идёт снег.',
+ '昨日[きのう] は ** 寝[ね]ました 。|Вчера я хорошо выспался.',
+ '先生[せんせい] の 説明[せつめい] が ** 分[わ]かりました 。|Я хорошо понял объяснение учителя.',
+ '彼[かれ] と は ** 話[はな]します 。|С ним я часто разговариваю.'
+ ]},
+{id:'tokidoki',t:0,w:'時々[ときどき]',ru:'иногда',
+ note:'«Иногда» (≈ 30–50%). В прогнозе погоды: 晴[は]れ時々[ときどき]雨[あめ] — «ясно, временами дождь».',
+ vs:['tamani','yoku'],
+ ex:[
+ '** 映画[えいが] を 見[み]ます 。|Иногда смотрю фильмы.',
+ '** 母[はは] に 電話[でんわ] します 。|Иногда звоню маме.',
+ '明日[あした] は 晴[は]れ ** 雨[あめ] です 。|Завтра ясно, временами дождь.',
+ '** 自分[じぶん] で 料理[りょうり] を 作[つく]ります 。|Иногда сам готовлю.',
+ '日曜日[にちようび] は ** 友達[ともだち] と テニス を します 。|По воскресеньям иногда играю с друзьями в теннис.',
+ '漢字[かんじ] を ** 忘[わす]れます 。|Иногда забываю кандзи.'
+ ]},
+{id:'tamani',t:0,w:'たまに',ru:'изредка',
+ note:'«Изредка» (≈ 10–20%) — реже, чем 時々[ときどき]. たまには — «хоть иногда»: たまには休[やす]んで！',
+ vs:['tokidoki'],
+ ex:[
+ '** 外[そと] で 食[た]べます 。|Изредка ем не дома.',
+ '父[ちち] は ** 料理[りょうり] を します 。|Папа изредка готовит.',
+ '** 昔[むかし] の 友達[ともだち] に 会[あ]います 。|Изредка встречаюсь со старыми друзьями.',
+ 'この 町[まち] は ** 雪[ゆき] が 降[ふ]ります 。|В этом городе изредка выпадает снег.',
+ '*たまには* 休[やす]んで ください 。|Отдыхайте хоть иногда.',
+ '** 電車[でんしゃ] が 遅[おく]れます 。|Изредка электрички опаздывают.'
+ ]},
+{id:'amari',t:0,w:'あまり',suf:'〜ない',ru:'не очень, не особо',
+ note:'С отрицанием — «не очень, не особо, редко». Мягче, чем 全然[ぜんぜん]. В разговоре часто あんまり.',
+ vs:['zenzen','hotondo','sonnani'],
+ ex:[
+ '肉[にく] は ** 食[た]べません 。|Мясо я ем не особо часто.',
+ 'この 映画[えいが] は ** 面白[おもしろ]く なかった です 。|Этот фильм был не очень интересным.',
+ '今日[きょう] は ** 寒[さむ]く ない です 。|Сегодня не очень холодно.',
+ 'お酒[さけ] は ** 好[す]き じゃ ありません 。|Алкоголь я не особо люблю.',
+ 'テレビ は ** 見[み]ません 。|Телевизор я смотрю не особо часто.',
+ '漢字[かんじ] は ** 得意[とくい] じゃ ない です 。|Кандзи у меня не очень получаются.',
+ '時間[じかん] が ** ありません 。|Времени не особо много.'
+ ]},
+{id:'zenzen',t:0,w:'全然[ぜんぜん]',suf:'〜ない',ru:'совсем не',
+ note:'С отрицанием — «совсем не, ни капли». Сильнее, чем あまり. В разговоре бывает и без отрицания: 全然[ぜんぜん]大丈夫[だいじょうぶ] — «всё в полном порядке».',
+ vs:['amari','hotondo'],
+ ex:[
+ '日本語[にほんご] が ** 分[わ]かりません 。|Совсем не понимаю по-японски.',
+ '昨日[きのう] は ** 寝[ね]られません でした 。|Вчера совсем не мог уснуть.',
+ 'この 本[ほん] は ** 面白[おもしろ]く ない 。|Эта книга совсем не интересная.',
+ '「 痛[いた]い ？ 」 「 ううん 、 ** 大丈夫[だいじょうぶ] ！ 」|«Больно?» — «Не-а, всё в полном порядке!»',
+ '運動[うんどう] は ** しません 。|Спортом я совсем не занимаюсь.',
+ 'お金[かね] が ** ない 。|Денег совсем нет.',
+ '宿題[しゅくだい] を ** して いません 。|Домашку я совсем не делал.'
+ ]},
 // ---------- 1 ----------
 {id:'totemo',t:1,w:'とても',ru:'очень',
  note:'Нейтральное «очень». Подходит и в вежливой, и в обычной речи. Ставится перед прилагательным.',
@@ -919,6 +997,8 @@ const CARDS = [
 
 // Groups of near-synonyms: never offered as wrong options against each other.
 const CLASH = [
+ ['tokidoki','tamani'],
+ ['amari','sonnani'],
  ['totemo','sugoku','kanari','hontou','nakanaka'],
  ['dandan','sukoshizutsu'],
  ['shikkari','chanto'],
@@ -932,6 +1012,25 @@ const CLASH = [
 
 // "Не путай!" — contrast drills. ctx = situation in Russian, s = sentence with slot, a = answer id.
 const PAIRS = [
+ {ids:['itsumo','yoku','tokidoki','tamani'], title:'いつも, よく, 時々[ときどき] или たまに?',
+  rule:'Это шкала частоты: いつも ≈ 100% → よく ≈ 70% → 時々[ときどき] ≈ 40% → たまに ≈ 15%. Подумай, как часто это происходит.',
+  q:[
+  {ctx:'Ты пьёшь кофе каждое утро, без исключений.', s:'朝[あさ] は ** コーヒー を 飲[の]みます 。', a:'itsumo'},
+  {ctx:'Ходишь в кино 4–5 раз в неделю.', s:'** 映画[えいが] を 見[み]ます 。', a:'yoku'},
+  {ctx:'Звонишь бабушке примерно раз в две недели.', s:'** 祖母[そぼ] に 電話[でんわ] します 。', a:'tokidoki'},
+  {ctx:'Ешь в ресторане пару раз в год.', s:'** レストラン で 食[た]べます 。', a:'tamani'},
+  {ctx:'Брат опаздывает каждый раз.', s:'兄[あに] は ** 遅[おく]れます 。', a:'itsumo'},
+  {ctx:'Зимой снег идёт почти каждый день.', s:'冬[ふゆ] は ** 雪[ゆき] が 降[ふ]ります 。', a:'yoku'}
+  ]},
+ {ids:['amari','zenzen','hotondo'], title:'あまり, 全然[ぜんぜん] или ほとんど?',
+  rule:'Все три идут с отрицанием, разница в силе: あまり〜ない — «не очень, не особо». ほとんど〜ない — «почти не». 全然[ぜんぜん]〜ない — «совсем не, ноль».',
+  q:[
+  {ctx:'Ты не понимаешь по-корейски ни слова.', s:'韓国語[かんこくご] は ** 分[わ]かりません 。', a:'zenzen'},
+  {ctx:'Сладкое ешь, но без особой любви.', s:'甘[あま]い 物[もの] は ** 好[す]き じゃ ない です 。', a:'amari'},
+  {ctx:'В кошельке осталось пара монет — почти ничего.', s:'お金[かね] が ** ありません 。', a:'hotondo'},
+  {ctx:'Фильм средненький, не впечатлил.', s:'この 映画[えいが] は ** 面白[おもしろ]く なかった 。', a:'amari'},
+  {ctx:'Всю ночь не сомкнул глаз ни на минуту.', s:'昨日[きのう] は ** 寝[ね]て いません 。', a:'zenzen'}
+  ]},
  {ids:['mou','mada'], title:'もう или まだ?',
   rule:'もう — «уже» (действие произошло). まだ — «ещё/ещё не» (пока не произошло или продолжается). На вопрос «もう〜ましたか» отвечают «はい、もう〜ました» или «いいえ、まだです».',
   q:[
@@ -1060,6 +1159,7 @@ const PAIRS = [
 
 // Glossary. Kana keys match exactly; keys starting with kanji also match as a prefix (stem of a verb/adjective).
 const GLOSS = {
+'兄':'старший брат','遅':'опаздывать (遅[おく]れる)','家族':'семья','晩ご飯':'ужин','公園':'парк','母':'мама','晴れ':'ясная погода','自分':'сам, себя','作':'делать, готовить (作[つく]る)','テニス':'теннис','外':'снаружи, на улице','父':'папа','昔':'давно, в прошлом; 昔[むかし]の = «старый, давний»','得意':'хорошо получается','ううん':'не-а (разг. «нет»)','祖母':'бабушка','レストラン':'ресторан','韓国語':'корейский язык','甘':'сладкий (甘[あま]い)',
 // particles & grammar
 'は':'частица темы («что касается…»)','が':'частица подлежащего','を':'частица прямого дополнения','に':'частица: в / к / во столько-то','で':'частица: в (месте), на (транспорте), чем','へ':'частица направления: в / к','と':'частица: и / с (кем-то) / цитата','も':'тоже, и','の':'частица принадлежности («…ого»); также «тот, что»','から':'с / от; потому что','まで':'до','より':'чем (сравнение)','や':'и (неполный перечень)','ね':'…да? правда? (ищет согласия)','よ':'…же! (сообщает новое)','か':'вопросительная частица','な':'…а? (размышление вслух)','では':'в (месте) — с выделением','には':'в / к — с выделением','なら':'если речь о…','けど':'но, хотя','ので':'так как, поэтому','ん':'(объяснительный оттенок) ん です が = «дело в том, что…»','ほう':'сторона; のほうが = «…более» / ほうがいい = «лучше»','よう':'так, чтобы; ようになる = «стать способным»; ようにする = «стараться»','こと':'факт, дело; 〜たことがある = «доводилось»','ため':'ради, для','たち':'(множ. число людей)','さん':'вежливый суффикс (господин/госпожа)','ごろ':'около (о времени)','そう':'похоже, выглядит (〜そう)','だ':'есть (простая связка)','だった':'был (простая связка, прошед.)','です':'есть (вежливая связка)','でした':'был (вежливая связка, прошед.)','でしょう':'наверное, …ведь (предположение)','じゃ':'ну / (じゃない = не является)','ない':'не (отрицание)','なかった':'не был (отриц., прошед.)',
 // helper verbs
@@ -1092,12 +1192,13 @@ const PUNCT=/^[、。！？「」…]+$/;
 
 /* ---------- state ---------- */
 const KEY='fukushi-dojo-v1';
-let S={sel:[1],m:{},xp:0,sound:true,furi:true,streak:0,last:'',best:0};
+let S={sel:[0],m:{},xp:0,sound:true,furi:true,streak:0,last:'',best:0};
 try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)S=Object.assign(S,s)}catch(e){}
 const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
 const M=id=>S.m[id]||0;
 function bump(id,d){S.m[id]=Math.max(0,Math.min(5,M(id)+d));if(d>0)S.xp+=10;dayTick();save();topbar()}
 function dayTick(){const d=new Date(),t=d.toISOString().slice(0,10);if(S.last===t)return;const y=new Date(d-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
+const disp=n=>TABLES.findIndex(t=>t.n===n)+1;
 const pool=()=>CARDS.filter(c=>S.sel.includes(c.t));
 const inPool=id=>S.sel.includes(BY[id].t);
 
@@ -1238,7 +1339,7 @@ const MODES=[
 function home(keep,popT){
   hideTip();stopBlitz();const y=scrollY;
   const p=pool(),pct=Math.round(p.reduce((a,c)=>a+M(c.id),0)/(Math.max(1,p.length)*5)*100);
-  const selNames=S.sel.slice().sort((a,b)=>a-b);
+  const selNames=S.sel.map(disp).sort((a,b)=>a-b);
   app.innerHTML=`
   <section class="hero">
     <div class="bob">${mascot(pct>70?'joy':'')}</div>
@@ -1251,12 +1352,12 @@ function home(keep,popT){
 
   <div class="sechead">
     <div><h2 class="sec">Таблички</h2><p>Нажми, чтобы включить или выключить. Задания сразу подстроятся.</p></div>
-    <div class="chips"><span class="label">Пройдено до:</span>${TABLES.map(t=>`<button class="chip num" data-upto="${t.n}">${t.n}</button>`).join('')}<button class="chip" data-all>Все</button></div>
+    <div class="chips"><span class="label">Пройдено до:</span>${TABLES.map((t,i)=>`<button class="chip num" data-upto="${i+1}">${i+1}</button>`).join('')}<button class="chip" data-all>Все</button></div>
   </div>
   <div class="tables">${TABLES.map(t=>{
     const cs=CARDS.filter(c=>c.t===t.n),m=Math.round(cs.reduce((a,c)=>a+M(c.id),0)/(cs.length*5)*100),on=S.sel.includes(t.n);
     return `<button class="tcard ${on?'on':''}" style="--c:var(--t${t.n})" data-t="${t.n}" aria-pressed="${on}">
-      <span class="tab">${t.n}</span><span class="check">${IC.check}</span>
+      <span class="tab">${disp(t.n)}</span><span class="check">${IC.check}</span>
       <h3>${esc(t.name)}</h3>
       <div class="words">${cs.map(c=>`<span>${ruby(c.w)}</span>`).join('')}</div>
       <div class="meta"><span>${cs.length} ${plural(cs.length,['слово','слова','слов'])}</span><span>${m}%</span></div>
@@ -1268,7 +1369,7 @@ function home(keep,popT){
      <span class="ic">${IC[m.ic]}</span><span class="step">шаг ${i+1}</span><div><h3>${m.n}</h3><p>${m.d}</p></div></button>`).join('')}</div>
   <div class="hint"><b>Совет для запоминания:</b> 10–15 минут каждый день работают лучше, чем час раз в неделю. Начинай с «Флеш-карточек», пока все слова не станут зелёными, затем «Контекст» и «Не путай!». Ошибки — это хорошо: слово, в котором ошибся, игра покажет тебе снова.</div>`;
   app.querySelectorAll('.tcard').forEach(b=>b.onclick=()=>{const n=+b.dataset.t;S.sel=S.sel.includes(n)?S.sel.filter(x=>x!==n):[...S.sel,n];save();home(true,[n])});
-  app.querySelectorAll('[data-upto]').forEach(b=>b.onclick=()=>{S.sel=TABLES.filter(t=>t.n<=+b.dataset.upto).map(t=>t.n);save();home(true,S.sel)});
+  app.querySelectorAll('[data-upto]').forEach(b=>b.onclick=()=>{S.sel=TABLES.slice(0,+b.dataset.upto).map(t=>t.n);save();home(true,S.sel)});
   app.querySelector('[data-all]').onclick=()=>{S.sel=TABLES.map(t=>t.n);save();home(true,S.sel)};
   (popT||[]).forEach(n=>{const el=app.querySelector(`.tcard[data-t="${n}"]`);if(el)el.classList.add('toggled')});
   app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>({study,flash,fill,pairs,build,match,blitz})[b.dataset.mode]());
@@ -1300,7 +1401,7 @@ const pickCard=(list)=>pickW(list||pool(),c=>6-M(c.id));
 function study(){
   const p=pool();
   shell('Изучить',`<div class="studyhead"><span class="label" style="align-self:center">Нажми на слово в примере — увидишь перевод. ${canSpeak?'Кнопка со звуком читает фразу.':''}</span></div>
-   ${TABLES.filter(t=>S.sel.includes(t.n)).map(t=>`<section class="tgroup" style="--c:var(--t${t.n})"><h3><i></i>Табличка ${t.n} · ${esc(t.name)}</h3><div class="scards">${p.filter(c=>c.t===t.n).map(scard).join('')}</div></section>`).join('')}`);
+   ${TABLES.filter(t=>S.sel.includes(t.n)).map(t=>`<section class="tgroup" style="--c:var(--t${t.n})"><h3><i></i>Табличка ${disp(t.n)} · ${esc(t.name)}</h3><div class="scards">${p.filter(c=>c.t===t.n).map(scard).join('')}</div></section>`).join('')}`);
   app.querySelector('.stage').style.maxWidth='1060px';
   setSc(`${p.length} ${plural(p.length,['слово','слова','слов'])}`);
   app.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{const id=b.dataset.more,ul=b.previousElementSibling;ul.innerHTML=exOf(id).map(exLi).join('');b.remove()});
@@ -1330,7 +1431,7 @@ function flash(){
       app.querySelector('.stage').innerHTML=`
         <div class="row" style="justify-content:center;margin-bottom:14px"><button class="chip ${dir==='jp'?'on':''}" data-dir="jp">Японский → русский</button><button class="chip ${dir==='ru'?'on':''}" data-dir="ru">Русский → японский</button></div>
         <div class="fc" style="--c:var(--t${c.t})"><div class="fc-in" id="fcin" tabindex="0" role="button" aria-label="Перевернуть карточку">
-          <div class="fc-face"><div class="fc-band"></div><span class="label">Табличка ${c.t}</span>${front}<span class="tap">Вспомни и нажми, чтобы перевернуть</span></div>
+          <div class="fc-face"><div class="fc-band"></div><span class="label">Табличка ${disp(c.t)}</span>${front}<span class="tap">Вспомни и нажми, чтобы перевернуть</span></div>
           <div class="fc-face back"><div class="fc-band"></div>
             <div class="row" style="margin-top:6px">${spkBtn(plain(c.w))}<div class="jp" style="font-size:30px;font-weight:800;line-height:1.7">${wordHTML(c)}</div></div>
             <div style="font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.25">${esc(c.ru)}</div>

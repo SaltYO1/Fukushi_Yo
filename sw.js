@@ -1,5 +1,5 @@
 // Fukushi Dōjō — offline cache. Bump VERSION after every update of index.html.
-const VERSION = 'fukushi-v2';
+const VERSION = 'fukushi-v3';
 const CORE = ['./', './index.html', './manifest.webmanifest', './icon-192.png', './icon-512.png', './maskable-512.png', './apple-touch-icon.png'];
 
 self.addEventListener('install', e => {
