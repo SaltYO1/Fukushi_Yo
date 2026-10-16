@@ -1,0 +1,1581 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" href="icon-192.png">
+<link rel="apple-touch-icon" href="apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="ふくし">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
+<title>Fukushi Dōjō</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#F7F9FC">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=M+PLUS+Rounded+1c:wght@400;500;700;800&family=Nunito:wght@400;600;700;800;900&family=Unbounded:wght@500;700;800&display=swap">
+<style>
+/* Layout: sticker-cards on a dotted notebook ground; each of the 8 tables keeps its board colour as an index tab. */
+:root{
+  --bg:#F7F9FC; --dot:#E3E8F0; --surface:#FFFFFF; --surface2:#F5F7FA; --ink:#262A33; --muted:#6B7280; --line:#D8DFE9; --shadowc:#E3E9F1;
+  --soft:#E9EEF4; --pop:#FF3D7F; --pop-ink:#FFFFFF; --sun:#FFC23D; --good:#10A877; --good-bg:#E2F7EF; --bad:#E8434F; --bad-bg:#FDE8EA;
+  --t1:#21B04F; --t2:#6A3BE0; --t3:#1877F4; --t4:#F0602F; --t5:#11A389; --t6:#9A2F72; --t7:#E9A800; --t8:#E2609E;
+  --shadow:0 4px 0 var(--shadowc),0 8px 24px rgba(38,52,77,.06); --shadow-sm:0 2px 0 var(--shadowc);
+  --f-display:'Unbounded','Nunito',system-ui,sans-serif; --f-body:'Nunito',system-ui,sans-serif; --f-jp:'M PLUS Rounded 1c','Hiragino Maru Gothic ProN','Yu Gothic',sans-serif;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#15181F; --dot:#252A34; --surface:#1F232C; --surface2:#262B35; --ink:#EEF1F6; --muted:#A3ABB9; --line:#363D4A; --shadowc:#0E1116;
+  --soft:#313744; --pop:#FF5C93; --pop-ink:#1A0610; --sun:#FFCB55; --good:#3DD6A0; --good-bg:#15362D; --bad:#FF6B74; --bad-bg:#3E2228;
+  --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#15181F; --dot:#252A34; --surface:#1F232C; --surface2:#262B35; --ink:#EEF1F6; --muted:#A3ABB9; --line:#363D4A; --shadowc:#0E1116;
+  --soft:#313744; --pop:#FF5C93; --pop-ink:#1A0610; --sun:#FFCB55; --good:#3DD6A0; --good-bg:#15362D; --bad:#FF6B74; --bad-bg:#3E2228;
+  --t1:#3ACB6A; --t2:#8F67F2; --t3:#4B97FF; --t4:#FF7D4F; --t5:#2DC4A6; --t6:#C9529A; --t7:#F7C21E; --t8:#F47DB4; color-scheme:dark}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+html,body{min-height:100%}
+body{margin:0}
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{background:var(--bg);background-image:radial-gradient(var(--dot) 1.4px,transparent 1.5px);background-size:22px 22px;color:var(--ink);font-family:var(--f-body);font-size:16px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+button:focus-visible,.tok:focus-visible{outline:3px solid var(--pop);outline-offset:2px}
+.wrap{max-width:1060px;margin:0 auto}
+.jp{font-family:var(--f-jp);font-weight:500}
+ruby{ruby-position:over}
+rt{font-family:var(--f-jp);font-size:.5em;font-weight:500;color:var(--muted);letter-spacing:0}
+body.nofuri rt{visibility:hidden}
+
+/* top bar */
+.top{display:flex;align-items:center;gap:12px;padding-block:16px;flex-wrap:wrap}
+.brand{display:flex;align-items:center;gap:10px;margin-right:auto;background:none;border:0;padding:0}
+.stamp rt{color:var(--pop-ink);opacity:.85;font-size:9px;font-weight:800}
+.stamp{width:44px;height:44px;line-height:1;border-radius:12px;background:var(--pop);color:var(--pop-ink);display:grid;place-items:center;font-family:var(--f-jp);font-weight:800;font-size:24px;border:0;box-shadow:var(--shadow-sm);transform:rotate(-6deg)}
+.brand b{font-family:var(--f-jp);font-weight:800;font-size:20px;letter-spacing:-.01em;line-height:1.05;text-align:left}
+.brand small{display:block;font-family:var(--f-body);font-weight:700;font-size:12px;color:var(--muted);letter-spacing:.06em;text-transform:uppercase}
+.pill{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:2px solid var(--line);border-radius:999px;padding:6px 12px;font-weight:800;font-size:14px;box-shadow:var(--shadow-sm);font-variant-numeric:tabular-nums}
+.iconbtn{width:42px;height:42px;border-radius:12px;background:var(--surface);border:2px solid var(--line);box-shadow:var(--shadow-sm);display:grid;place-items:center;padding:0}
+.iconbtn:active{transform:translateY(2px);box-shadow:none}
+.iconbtn svg{width:22px;height:22px}
+.iconbtn.off{opacity:.45}
+.iconbtn .jp{font-size:13px;font-weight:800;line-height:1}
+
+/* hero */
+.hero{display:grid;grid-template-columns:auto 1fr;gap:20px;align-items:center;background:var(--surface);border:2px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:22px 26px;margin-bottom:28px;position:relative;overflow:hidden}
+.hero h1{font-family:var(--f-display);font-weight:800;font-size:clamp(22px,4vw,34px);line-height:1.1;margin:0 0 8px;letter-spacing:-.02em;text-wrap:balance}
+.hero h1 .jp{color:var(--pop);font-weight:800}
+.hero p{margin:0;color:var(--muted);max-width:60ch}
+.hero .now{margin-top:12px;display:flex;flex-wrap:wrap;gap:8px;align-items:center;font-weight:700}
+.mascot{width:118px;height:118px}
+.mascot.sm{width:72px;height:72px}
+.bob{animation:bob 3s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-5px)}}
+
+h2.sec{font-family:var(--f-display);font-weight:700;font-size:20px;margin:0;letter-spacing:-.01em}
+.sechead{display:flex;align-items:end;justify-content:space-between;gap:12px;flex-wrap:wrap;margin:0 0 14px}
+.sechead p{margin:2px 0 0;color:var(--muted);font-size:14px}
+.chips{display:flex;flex-wrap:wrap;gap:6px;align-items:center}
+.chip{border:2px solid var(--line);background:var(--surface);border-radius:999px;padding:5px 12px;font-weight:800;font-size:13px;box-shadow:var(--shadow-sm)}
+.chip:active{transform:translateY(2px);box-shadow:none}
+.chip.on{background:var(--pop);border-color:var(--pop);color:var(--pop-ink)}
+.chip.num{width:34px;padding:5px 0;text-align:center}
+.label{font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+
+/* table picker */
+.tables{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:34px}
+.tcard{--c:var(--t1);position:relative;text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:20px;padding:30px 14px 14px;box-shadow:var(--shadow);transition:transform .12s;display:flex;flex-direction:column;gap:8px;min-width:0}
+.tcard:hover{transform:translateY(-2px)}
+.tcard:active{transform:translateY(3px);box-shadow:none}
+.tcard .tab{position:absolute;top:-2px;left:14px;background:var(--c);color:#fff;font-family:var(--f-display);font-weight:800;font-size:13px;padding:4px 12px 5px;border:0;border-radius:0 0 12px 12px}
+.tcard .check{position:absolute;top:10px;right:10px;width:26px;height:26px;border-radius:8px;border:2px solid var(--line);display:grid;place-items:center;background:var(--surface2)}
+.tcard.toggled{animation:tog .28s cubic-bezier(.3,1.5,.6,1)}
+.tcard.toggled .check{animation:tog .28s cubic-bezier(.3,1.5,.6,1)}
+@keyframes tog{40%{transform:scale(.96)}}
+.tcard,.tcard .check{transition:transform .12s,background-color .25s}
+.tcard.on{background:color-mix(in srgb,var(--c) 13%,var(--surface))}
+.tcard.on .check{background:var(--c)}
+.tcard .check svg{width:16px;height:16px;opacity:0;stroke:#fff}
+.tcard.on .check svg{opacity:1}
+.tcard h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:15px;line-height:1.2}
+.tcard .words{font-family:var(--f-jp);font-weight:700;font-size:15px;line-height:1.9;color:var(--ink);display:flex;flex-wrap:wrap}
+.tcard .words span{white-space:nowrap}
+.tcard .words span+span::before{content:'・';color:var(--c)}
+.bar{height:8px;border-radius:99px;background:var(--soft);overflow:hidden;margin-top:auto}
+.bar i{display:block;height:100%;background:var(--c);border-radius:99px;transition:width .4s}
+.tcard .meta{display:flex;justify-content:space-between;font-size:12px;font-weight:800;color:var(--muted)}
+
+/* modes */
+.modes{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px}
+.mode{--c:var(--pop);text-align:left;border:2px solid var(--line);border-radius:22px;padding:16px;background:var(--surface);box-shadow:var(--shadow);display:flex;flex-direction:column;gap:6px;min-width:0;position:relative;transition:transform .12s}
+.mode:hover{transform:translateY(-2px) rotate(-.4deg)}
+.mode:active{transform:translateY(3px);box-shadow:none}
+.mode[disabled]{opacity:.45;cursor:not-allowed;transform:none}
+.mode .ic{width:50px;height:50px;border-radius:14px;background:var(--c);border:0;display:grid;place-items:center;margin-bottom:4px}
+.mode .ic svg{width:28px;height:28px}
+.mode .step{position:absolute;top:14px;right:14px;font-family:var(--f-display);font-weight:800;font-size:12px;color:var(--muted)}
+.mode h3{margin:0;font-family:var(--f-display);font-weight:700;font-size:16px}
+.mode p{margin:0;color:var(--muted);font-size:14px;line-height:1.4}
+.mode.wide{grid-column:span 2;flex-direction:row;align-items:center;gap:16px}
+.mode.wide .ic{margin:0;flex:none}
+.hint{background:var(--surface2);border:2px dashed var(--soft);border-radius:18px;padding:14px 18px;margin-top:22px;color:var(--muted);font-size:14px}
+.hint b{color:var(--ink)}
+
+/* play shell */
+.playbar{display:flex;align-items:center;gap:12px;margin:4px 0 20px}
+.btn{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:10px 18px;font-weight:800;box-shadow:var(--shadow-sm);display:inline-flex;align-items:center;gap:8px}
+.btn:active{transform:translateY(2px);box-shadow:none}
+.btn.main{background:var(--pop);border-color:var(--pop);color:var(--pop-ink);box-shadow:0 3px 0 color-mix(in srgb,var(--pop) 55%,#000)}
+
+.btn.sm{padding:6px 12px;font-size:14px;border-radius:11px}
+.prog{flex:1;height:14px;border:2px solid var(--line);border-radius:99px;background:var(--surface);overflow:hidden}
+.prog i{display:block;height:100%;background:var(--sun);transition:width .35s;border-right:2px solid var(--line)}
+.prog i[style*="width: 0"]{border:0}
+.stage{max-width:760px;margin:0 auto}
+.card{background:var(--surface);border:2px solid var(--line);border-radius:26px;box-shadow:var(--shadow);padding:24px}
+.qtag{display:inline-flex;align-items:center;gap:8px;font-size:12px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:12px}
+.qtag i{width:10px;height:10px;border-radius:50%;background:var(--c,var(--pop));border:2px solid var(--line)}
+.sent{font-family:var(--f-jp);font-weight:500;font-size:clamp(22px,4.4vw,30px);line-height:2.15;margin:0 0 6px;word-break:keep-all;overflow-wrap:anywhere}
+.sent.md{font-size:20px;line-height:2}
+.sent.sm{font-size:17px;line-height:1.95}
+.tok{cursor:pointer;border-radius:6px;padding:0 1px;transition:background .15s}
+.tok:hover{background:var(--soft)}
+.hl{color:var(--c,var(--pop));font-weight:800}
+.slot{color:var(--c,var(--pop));font-weight:800;cursor:pointer;border-bottom:3px solid currentColor}
+.gap{display:inline-block;min-width:4.2em;height:1.25em;vertical-align:-.15em;border:2.5px dashed var(--c,var(--pop));border-radius:10px;margin:0 3px;background:color-mix(in srgb,var(--c,var(--pop)) 9%,transparent)}
+.ru{color:var(--muted);font-weight:600;font-size:16px}
+.ctx{background:var(--surface2);border:2px solid var(--soft);border-radius:14px;padding:10px 14px;font-weight:700;margin-bottom:14px}
+.opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:20px}
+.opt{border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:12px 14px 10px;box-shadow:var(--shadow-sm);font-family:var(--f-jp);font-weight:700;font-size:22px;line-height:1.9;text-align:center;position:relative;min-width:0}
+.opt .k{position:absolute;left:10px;top:6px;font-family:var(--f-body);font-size:11px;font-weight:900;color:var(--muted)}
+.opt .suf{font-size:.7em;color:var(--muted)}
+.opt:hover:not([disabled]){background:var(--surface2)}
+.opt:active:not([disabled]){transform:translateY(2px);box-shadow:none}
+.opt.ok{background:var(--good-bg);border-color:var(--good);color:var(--ink)}
+.opt.no{background:var(--bad-bg);border-color:var(--bad)}
+.opt[disabled]{cursor:default}
+.fb{margin-top:18px;border-radius:18px;padding:14px 16px;border:2px solid var(--line);display:grid;gap:6px}
+.fb.ok{background:var(--good-bg)}
+.fb.no{background:var(--bad-bg)}
+.fb h4{margin:0;font-family:var(--f-display);font-size:16px;font-weight:700;display:flex;align-items:center;gap:8px}
+.fb p{margin:0;font-size:15px}
+.fb .jw{font-family:var(--f-jp);font-weight:800}
+.row{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
+.row.end{justify-content:flex-end}
+.spk{width:34px;height:34px;border-radius:10px;border:2px solid var(--line);background:var(--surface);display:inline-grid;place-items:center;padding:0;box-shadow:var(--shadow-sm);flex:none}
+.spk svg{width:18px;height:18px}
+.spk:active{transform:translateY(2px);box-shadow:none}
+.shake{animation:shake .35s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.pop{animation:popin .3s cubic-bezier(.3,1.6,.6,1)}
+@keyframes popin{from{transform:scale(.92);opacity:.4}}
+
+/* study */
+.studyhead{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:18px}
+.tgroup{margin-bottom:30px}
+.tgroup>h3{font-family:var(--f-display);font-size:17px;margin:0 0 12px;display:flex;align-items:center;gap:10px}
+.tgroup>h3 i{width:14px;height:14px;border-radius:5px;background:var(--c);border:2px solid var(--line)}
+.scards{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px}
+.scard{--c:var(--t1);background:var(--surface);border:2px solid var(--line);border-radius:22px;box-shadow:var(--shadow);overflow:hidden;min-width:0}
+.scard .head{background:color-mix(in srgb,var(--c) 16%,var(--surface));border-bottom:2px solid var(--line);padding:14px 16px;display:flex;gap:12px;align-items:center}
+.scard .w{font-family:var(--f-jp);font-weight:800;font-size:28px;line-height:1.7;color:var(--ink)}
+.scard .w .suf{font-size:.6em;color:var(--muted)}
+.scard .m{font-weight:800;line-height:1.3}
+.dots{display:flex;gap:3px;margin-top:4px}
+.dots i{width:8px;height:8px;border-radius:50%;background:var(--soft)}
+.dots i.f{background:var(--c)}
+.scard .body{padding:14px 16px;display:grid;gap:10px}
+.note{font-size:14.5px;line-height:1.5;margin:0}
+.vs{display:flex;flex-wrap:wrap;gap:6px;align-items:center;font-size:13px;font-weight:800;color:var(--muted)}
+.vs button{font-family:var(--f-jp);font-weight:700;border:2px solid var(--soft);background:var(--surface2);border-radius:999px;padding:2px 10px;font-size:14px}
+.exl{display:grid;gap:8px;margin:0;padding:0;list-style:none}
+.exl li{display:flex;gap:10px;align-items:flex-start;border-top:2px dashed var(--soft);padding-top:8px}
+.exl .tx{min-width:0}
+.badge{font-size:10px;font-weight:900;letter-spacing:.06em;text-transform:uppercase;color:var(--c);border:1.5px solid var(--c);border-radius:6px;padding:0 5px;vertical-align:2px;margin-left:4px;font-family:var(--f-body)}
+.more{justify-self:start}
+.flash-target{animation:flashT 1.2s}
+@keyframes flashT{0%,40%{box-shadow:0 0 0 6px var(--pop)}}
+
+/* flashcards */
+.fc{perspective:1200px;margin:0 auto 18px;max-width:560px}
+.fc-in{position:relative;min-height:340px;transition:transform .55s cubic-bezier(.4,.2,.2,1);transform-style:preserve-3d;cursor:pointer}
+.fc.flip .fc-in{transform:rotateY(180deg)}
+.fc-face{position:absolute;inset:0;backface-visibility:hidden;-webkit-backface-visibility:hidden;background:var(--surface);border:2px solid var(--line);border-radius:28px;box-shadow:var(--shadow);padding:24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;gap:10px;overflow:auto}
+.fc-face.back{transform:rotateY(180deg);justify-content:flex-start;text-align:left;align-items:stretch}
+.fc-face .big{font-family:var(--f-jp);font-weight:800;font-size:clamp(40px,9vw,64px);line-height:1.6}
+.fc-face .big.ru{font-family:var(--f-display);font-size:clamp(22px,4.5vw,30px);color:var(--ink);line-height:1.25}
+.fc-face .tap{color:var(--muted);font-size:13px;font-weight:800}
+.fc-band{position:absolute;top:0;left:0;right:0;height:14px;background:var(--c);border-bottom:2px solid var(--line);border-radius:26px 26px 0 0}
+.grade{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;max-width:560px;margin:0 auto}
+.grade .btn{justify-content:center;flex-direction:column;gap:0;padding:10px 6px}
+.grade .btn small{font-weight:700;font-size:12px;opacity:.75}
+.g1{background:var(--bad-bg)!important}.g2{background:color-mix(in srgb,var(--sun) 30%,var(--surface))!important}.g3{background:var(--good-bg)!important}
+
+/* match */
+.mgrid{display:grid;grid-template-columns:minmax(0,.8fr) minmax(0,1.2fr);gap:12px}
+.mcol{display:grid;gap:10px;align-content:start}
+.mt{border:2px solid var(--line);background:var(--surface);border-radius:16px;padding:10px 12px;box-shadow:var(--shadow-sm);text-align:left;min-height:58px;transition:opacity .3s,transform .12s;min-width:0}
+.mt.jpw{font-family:var(--f-jp);font-weight:800;font-size:21px;text-align:center;line-height:1.8}
+.mt.sel{background:color-mix(in srgb,var(--sun) 40%,var(--surface));transform:translateY(-2px)}
+.mt.done{background:var(--good-bg);border-color:var(--good);opacity:.55;pointer-events:none;box-shadow:none}
+.mt .sent{margin:0}
+.mt .ru{font-size:13px}
+
+/* build */
+.line{min-height:76px;border:2.5px dashed var(--soft);border-radius:18px;padding:10px;display:flex;flex-wrap:wrap;gap:8px;align-content:flex-start;margin:14px 0}
+.line.ok{border-style:solid;border-color:var(--good);background:var(--good-bg)}
+.line.no{border-style:solid;border-color:var(--bad);background:var(--bad-bg)}
+.bank{display:flex;flex-wrap:wrap;gap:8px;min-height:60px}
+.chunk{border:2px solid var(--line);background:var(--surface);border-radius:14px;padding:4px 12px;font-family:var(--f-jp);font-weight:700;font-size:20px;line-height:2;box-shadow:var(--shadow-sm)}
+.chunk.adv{background:color-mix(in srgb,var(--c) 18%,var(--surface))}
+.chunk.used{visibility:hidden}
+.chunk:active{transform:translateY(2px);box-shadow:none}
+
+/* blitz */
+.timer{display:flex;align-items:center;gap:14px;margin-bottom:16px}
+.tring{width:64px;height:64px;flex:none}
+.tring text{font-family:var(--f-display);font-weight:800;font-size:26px;fill:var(--ink)}
+.combo{font-family:var(--f-display);font-weight:800;color:var(--pop);font-size:18px}
+.bigscore{font-family:var(--f-display);font-weight:800;font-size:28px;margin-left:auto;font-variant-numeric:tabular-nums}
+
+/* pairs list */
+.plist{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.pbtn{text-align:left;background:var(--surface);border:2px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:14px 16px;display:grid;gap:4px;min-width:0}
+.pbtn:active{transform:translateY(3px);box-shadow:none}
+.pbtn b{font-family:var(--f-jp);font-size:20px;font-weight:800}
+.pbtn span{color:var(--muted);font-size:13.5px;line-height:1.4}
+.rule{background:color-mix(in srgb,var(--sun) 22%,var(--surface));border:2px solid var(--line);border-radius:18px;padding:12px 16px;margin-bottom:16px;font-size:14.5px}
+.rule b{font-family:var(--f-display);font-size:13px;display:block;margin-bottom:4px}
+
+/* results */
+.res{text-align:center;display:grid;justify-items:center;gap:10px}
+.res h2{font-family:var(--f-display);font-size:28px;margin:0}
+.res .num{font-family:var(--f-display);font-size:56px;font-weight:800;line-height:1;color:var(--pop)}
+.mist{text-align:left;width:100%;display:grid;gap:10px;margin-top:10px}
+.mist .it{border:2px solid var(--line);border-radius:16px;padding:10px 14px;background:var(--surface2)}
+.empty{text-align:center;padding:40px 10px;color:var(--muted);font-weight:700}
+
+/* tooltip */
+#tip{position:absolute;z-index:50;max-width:280px;background:var(--ink);color:var(--bg);border-radius:14px;padding:9px 13px;font-size:14px;line-height:1.35;box-shadow:0 10px 30px rgba(0,0,0,.25);pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s}
+#tip.on{opacity:1;transform:none}
+#tip .r{font-family:var(--f-jp);font-weight:800;font-size:17px;display:block}
+#tip .r small{font-weight:500;opacity:.75;margin-left:6px;font-size:13px}
+#toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translate(-50%,40px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:999px;font-weight:800;transition:.25s;z-index:60;pointer-events:none;max-width:calc(100% - 32px)}
+#toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:860px){.tables,.modes{grid-template-columns:repeat(2,minmax(0,1fr))}.scards,.plist{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:520px){
+  .hero{grid-template-columns:1fr;text-align:left;padding:18px}.hero .mascot{width:84px;height:84px}
+  .tables{gap:12px}.tcard{padding:28px 12px 12px}.tcard .words{font-size:13.5px}
+  .modes{grid-template-columns:minmax(0,1fr)}.mode.wide{grid-column:auto}
+  .opts{grid-template-columns:minmax(0,1fr)}.opt{font-size:20px}
+  .card{padding:18px}.mgrid{grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:8px}.mt.jpw{font-size:17px}
+  .brand b{font-size:16px}
+}
+
+.short{display:none}
+.inst{background:var(--pop);border-color:var(--pop);color:var(--pop-ink);cursor:pointer}
+.ios{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);width:min(420px,calc(100% - 32px));background:var(--surface);border:2px solid var(--line);border-radius:20px;box-shadow:var(--shadow);padding:14px 16px;z-index:70;font-size:14.5px}
+.ios b{display:block;font-family:var(--f-display);font-size:15px;margin-bottom:4px}
+.ios .row{margin-top:10px}
+@media (max-width:560px){
+  body{font-size:15px;padding-block:0 32px}
+  .top{gap:6px;padding-block:10px;flex-wrap:nowrap}
+  .stamp{width:36px;height:36px;font-size:19px;border-radius:10px}
+  .brand{gap:8px;min-width:0}
+  .brand b{font-size:14px;white-space:nowrap;line-height:1.2}.brand small{display:none}
+  .pill{white-space:nowrap}
+  .sechead p{display:none}
+  .top{justify-content:space-between}
+  .pill{padding:4px 9px;font-size:12.5px;gap:4px}
+  .long{display:none}.short{display:inline}
+  .iconbtn{width:34px;height:34px;border-radius:10px}.iconbtn svg{width:18px;height:18px}.iconbtn .jp{font-size:11px}
+  .hero{grid-template-columns:auto 1fr;gap:12px;padding:12px 14px;margin-bottom:16px;border-radius:20px;text-align:left}
+  .hero .mascot{width:58px;height:58px}
+  .hero h1{font-size:19px;margin:0 0 4px}
+  .hero .lead{display:none}
+  .hero .now{margin-top:6px;gap:5px}
+  .hero .now .pill{font-size:11.5px;padding:3px 8px}
+  .sechead{margin-bottom:10px;gap:8px}
+  .sechead p{font-size:12.5px}
+  h2.sec{font-size:17px}
+  .chips{gap:5px;flex-wrap:nowrap;width:100%}
+  .chips .label{display:none}
+  .chip{padding:4px 8px;font-size:12.5px}
+  .chip.num{width:auto;flex:1;padding:4px 0}
+  .tables{gap:10px;margin-bottom:22px}
+  .tcard{padding:24px 10px 10px;border-radius:16px;gap:5px}
+  .tcard .tab{font-size:11.5px;padding:2px 9px 3px;left:10px}
+  .tcard .check{width:22px;height:22px;top:8px;right:8px;border-radius:7px}
+  .tcard h3{font-size:12.5px}
+  .tcard .words{font-size:13px;line-height:1.75}
+  .tcard .meta{font-size:11px}
+  .bar{height:6px}
+  .mode{padding:12px;border-radius:18px;flex-direction:row;align-items:center;gap:12px}
+  .mode .ic{width:42px;height:42px;margin:0;flex:none}
+  .mode .ic svg{width:24px;height:24px}
+  .mode h3{font-size:14.5px}.mode p{font-size:13px}
+  .mode .step{top:10px;right:12px;font-size:10.5px}
+  .hint{font-size:13px;padding:12px 14px}
+  .playbar{margin:0 0 12px;gap:8px}
+  .btn{padding:9px 14px}
+  .fc-in{min-height:300px}
+  .sent{font-size:23px}
+  .sent.md{font-size:18px}
+}
+@media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}}
+</style>
+
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <button class="brand" id="home" aria-label="На главную"><span class="stamp"><ruby>副<rt>ふく</rt></ruby></span><b><span class="jp">ふくしどうじょう</span><small>fukushi dōjō</small></b></button>
+    <span class="pill" id="xp" title="Очки опыта"></span>
+    <span class="pill" id="streak" title="Дни подряд"></span>
+    <button class="pill inst" id="instBtn" hidden>Установить</button>
+    <button class="iconbtn" id="furiBtn" title="Фуригана: вкл/выкл"><span class="jp">ふり</span></button>
+    <button class="iconbtn" id="sndBtn" title="Звук: вкл/выкл"></button>
+  </header>
+  <main id="app"></main>
+</div>
+<div id="tip" role="tooltip"></div>
+<div id="toast" role="status" aria-live="polite"></div>
+
+<script>
+// ===== DATA =====
+// Token format: tokens split by spaces. 漢字[よみ] → ruby. "**" = slot (default form of the adverb), "*форма*" = slot with a specific form.
+// Example line: "jp|ru|alt-ids(comma)"; a leading "!" marks an example taken from the board.
+const TABLES = [
+  {n:1, name:'Насколько?', sub:'Степень: очень, немного, больше'},
+  {n:2, name:'Степень и перемены', sub:'Довольно, не так уж, постепенно'},
+  {n:3, name:'Как именно?', sub:'Образ действия'},
+  {n:4, name:'По порядку', sub:'Сначала, затем, сразу'},
+  {n:5, name:'Моё отношение', sub:'Уверенность и мнение'},
+  {n:6, name:'Время и намерение', sub:'Недавно, обязательно, по возможности'},
+  {n:7, name:'Привычки и точность', sub:'Обычно, наверное, впервые, ровно'},
+  {n:8, name:'Сколько раз? Уже или ещё?', sub:'Почти не, ни разу, уже, ещё, снова'}
+];
+
+const CARDS = [
+// ---------- 1 ----------
+{id:'totemo',t:1,w:'とても',ru:'очень',
+ note:'Нейтральное «очень». Подходит и в вежливой, и в обычной речи. Ставится перед прилагательным.',
+ vs:['sugoku','kanari'],
+ ex:[
+ '!この 映画[えいが] は ** 面白[おもしろ]い です 。|Этот фильм очень интересный.',
+ '!日本語[にほんご] は ** 難[むずか]しい です 。|Японский очень сложный.',
+ '今日[きょう] は ** いい 天気[てんき] です ね 。|Сегодня очень хорошая погода, правда?',
+ 'この 部屋[へや] は ** 静[しず]か です 。|В этой комнате очень тихо.',
+ '先生[せんせい] は ** 優[やさ]しい です 。|Учитель очень добрый.',
+ '東京[とうきょう] は 人[ひと] が ** 多[おお]い です 。|В Токио очень много людей.',
+ 'プレゼント 、 ** うれしかった です 。|Я очень обрадовался подарку.'
+ ]},
+{id:'sugoku',t:1,w:'すごく',ru:'очень, ужасно, реально (разг.)',
+ note:'Разговорное и эмоциональное «очень». С друзьями — отлично, в официальной речи лучше とても. Не путай с прилагательным すごい («потрясающий»).',
+ vs:['totemo'],
+ ex:[
+ '!今日[きょう] は ** 寒[さむ]い です 。|Сегодня ужасно холодно.',
+ '!この ケーキ 、 ** おいしい ！|Этот торт офигенно вкусный!',
+ 'この ゲーム 、 ** 楽[たの]しい ！|Эта игра безумно весёлая!',
+ '昨日[きのう] は ** 疲[つか]れた 。|Вчера я жутко устал.',
+ 'あの 歌手[かしゅ] 、 ** かっこいい よ 。|Тот певец ужасно крутой.',
+ '駅[えき] の 前[まえ] は いつも ** 混[こ]んで いる 。|Перед станцией всегда жутко много народу.',
+ 'この 店[みせ] の ラーメン 、 ** 安[やす]い よ ！|Рамен в этой лавке реально дешёвый!'
+ ]},
+{id:'chotto',t:1,w:'ちょっと',w2:'少[すこ]し',ru:'немного, слегка',
+ note:'ちょっと — разговорное, 少[すこ]し — нейтральнее и вежливее. ちょっと ещё смягчает отказ: 「今日[きょう]はちょっと…」 = «сегодня как-то не очень…».',
+ vs:['sukoshizutsu','motto'],
+ ex:[
+ '!** 疲[つか]れました 。|Я немного устал.',
+ '!時間[じかん] が *少[すこ]し* あります 。|У меня есть немного времени.',
+ '** 待[ま]って ください 。|Подождите немного.|shibaraku',
+ 'この 服[ふく] は ** 大[おお]きい です 。|Эта одежда немного великовата.',
+ '日本語[にほんご] が *少[すこ]し* 話[はな]せます 。|Я немного говорю по-японски.',
+ '今日[きょう] は ** 寒[さむ]い です ね 。|Сегодня немного прохладно, да?',
+ '塩[しお] を *少[すこ]し* 入[い]れて ください 。|Добавьте немного соли.'
+ ]},
+{id:'motto',t:1,w:'もっと',ru:'больше, ещё (сильнее)',
+ note:'«Ещё больше, чем сейчас». Сравнивает с нынешним состоянием: もっと大[おお]きい — «ещё больше», もっと勉強[べんきょう]したい — «хочу заниматься больше».',
+ vs:['zutto','mata','mada'],
+ ex:[
+ '!** 勉強[べんきょう] したい です 。|Хочу больше заниматься.',
+ '!** 大[おお]きい サイズ は あります か 。|Есть размер побольше?',
+ '** ゆっくり 話[はな]して ください 。|Говорите, пожалуйста, ещё медленнее.',
+ '** 野菜[やさい] を 食[た]べた ほう が いい です よ 。|Лучше есть больше овощей.',
+ '** 日本[にほん] の 映画[えいが] が 見[み]たい です 。|Хочу смотреть больше японских фильмов.',
+ '** 安[やす]い の は ありません か 。|Нет ли чего-нибудь подешевле?',
+ '明日[あした] は ** 早[はや]く 起[お]きます 。|Завтра встану ещё раньше.'
+ ]},
+{id:'zutto',t:1,w:'ずっと',ru:'всё время; намного, гораздо',
+ note:'Два значения. ① Долго и без перерыва: 朝[あさ]からずっと… ② «Намного» при сравнении: AはBよりずっと…',
+ vs:['motto','mada'],
+ ex:[
+ '!昨日[きのう] から ** 雨[あめ] です 。|Со вчерашнего дня всё время идёт дождь.',
+ '!去年[きょねん] より ** 忙[いそが]しく なりました 。|Я стал намного занятее, чем в прошлом году.',
+ '朝[あさ] から ** ゲーム を して います 。|С утра всё время играю в игры.',
+ '電車[でんしゃ] より 新幹線[しんかんせん] の ほう が ** 速[はや]い です 。|Синкансэн намного быстрее обычной электрички.',
+ '子供[こども] の 時[とき] から ** 日本[にほん] が 好[す]き です 。|С детства всё время люблю Японию.',
+ '会議[かいぎ] の 間[あいだ] 、 ** 座[すわ]って いました 。|Всё совещание я просидел.',
+ '東京[とうきょう] は 大阪[おおさか] より ** 大[おお]きい です 。|Токио намного больше Осаки.'
+ ]},
+{id:'futsuu',t:1,w:'普通[ふつう]',ru:'обычно; обычный',
+ note:'По сути это существительное/на-прилагательное. Как наречие аккуратнее 普通[ふつう]は. 普通[ふつう]の＋сущ. = «обычный». 普通[ふつう] — «как у всех принято», たいてい — «чаще всего (у меня)».',
+ vs:['taitei'],
+ ex:[
+ '!** は 電車[でんしゃ] で 行[い]きます 。|Обычно туда ездят на поезде.',
+ '!これ は ** の ご飯[はん] です 。|Это обычная еда.',
+ '日本[にほん] では ** 、 家[いえ] で 靴[くつ] を 脱[ぬ]ぎます 。|В Японии обычно дома снимают обувь.',
+ '** の コーヒー を ください 。|Обычный кофе, пожалуйста.',
+ '** の 人[ひと] は 7時[じ] ごろ 起[お]きます 。|Обычные люди встают около семи.',
+ 'この 店[みせ] は 土曜日[どようび] も ** に 開[あ]いて います 。|Этот магазин и в субботу работает как обычно.'
+ ]},
+// ---------- 2 ----------
+{id:'nakanaka',t:2,w:'なかなか',ru:'довольно-таки; (＋отриц.) никак не',
+ note:'① С утверждением: «весьма, лучше, чем ожидал» (лёгкое удивление). ② С отрицанием: «никак не…, всё не…».',
+ vs:['kanari','hotondo'],
+ ex:[
+ '!田中[たなか] さん の 料理[りょうり] は ** 美味[おい]しい です 。|Блюда Танаки довольно-таки вкусные.',
+ '!日本語[にほんご] が ** 上手[じょうず] に なりません 。|Японский никак не становится лучше.',
+ 'バス が ** 来[き]ません 。|Автобус всё никак не приходит.',
+ 'この 本[ほん] は ** 面白[おもしろ]い です よ 。|Эта книга, кстати, весьма интересная.',
+ '漢字[かんじ] が ** 覚[おぼ]えられません 。|Кандзи никак не запоминаются.',
+ '夜[よる] 、 ** 寝[ね]られません でした 。|Ночью никак не мог уснуть.',
+ '君[きみ] の 絵[え] 、 ** いい ね 。|А твой рисунок весьма неплох!'
+ ]},
+{id:'kanari',t:2,w:'かなり',ru:'довольно, значительно',
+ note:'«Заметно больше нормы». Сильнее, чем ちょっと, но звучит спокойнее и объективнее, чем とても.',
+ vs:['totemo','nakanaka'],
+ ex:[
+ '!** 疲[つか]れました 。|Я довольно сильно устал.',
+ '!駅[えき] から ** 遠[とお]い です 。|От станции довольно далеко.',
+ 'この 問題[もんだい] は ** 難[むずか]しい です 。|Это задание довольно сложное.',
+ '今日[きょう] は ** 歩[ある]きました 。|Сегодня я прилично прошёл пешком.',
+ 'この カメラ は ** 高[たか]かった です 。|Эта камера была довольно дорогой.',
+ '彼[かれ] は 英語[えいご] が ** できます 。|Он довольно хорошо знает английский.',
+ '雨[あめ] が ** 強[つよ]く なって きました 。|Дождь заметно усилился.'
+ ]},
+{id:'sonnani',t:2,w:'そんなに',suf:'〜ない',ru:'не так уж, не настолько',
+ note:'Почти всегда с отрицанием. Смягчает: «не настолько, как можно подумать». По смыслу близко к あまり〜ない.',
+ vs:['hotondo'],
+ ex:[
+ '!** 難[むずか]しく ない です 。|Не так уж и сложно.',
+ '!** 食[た]べられません 。|Я не могу столько съесть.',
+ 'この 映画[えいが] は ** 面白[おもしろ]く なかった です 。|Этот фильм был не таким уж интересным.',
+ '駅[えき] まで ** 遠[とお]く ない です よ 。|До станции не так уж далеко.',
+ '今日[きょう] は ** 寒[さむ]く ない です ね 。|Сегодня не так уж холодно, да?',
+ '日本語[にほんご] は ** 上手[じょうず] じゃ ない です 。|Я не так уж хорошо говорю по-японски.',
+ '** 心配[しんぱい] しないで ください 。|Не волнуйтесь вы так.'
+ ]},
+{id:'dandan',t:2,w:'だんだん',ru:'постепенно, мало-помалу',
+ note:'Изменение идёт само, плавно, шаг за шагом. Часто с 〜くなる / 〜になる / 〜てきた.',
+ vs:['sukoshizutsu','dondon'],
+ ex:[
+ '!** 寒[さむ]く なって きました 。|Постепенно становится холоднее.',
+ '!日本語[にほんご] が ** 分[わ]かる よう に なりました 。|Я постепенно начал понимать японский.',
+ '空[そら] が ** 暗[くら]く なって きました 。|Небо постепенно темнеет.',
+ '仕事[しごと] に ** 慣[な]れて きました 。|Постепенно привыкаю к работе.',
+ '** 眠[ねむ]く なって きた 。|Мало-помалу клонит в сон.',
+ '春[はる] に なって 、 ** 暖[あたた]かく なりました 。|Пришла весна, и постепенно потеплело.'
+ ]},
+{id:'sukoshizutsu',t:2,w:'少[すこ]しずつ',ru:'понемногу',
+ note:'«Маленькими порциями». Чаще про собственные шаги человека: 少[すこ]しずつ覚[おぼ]える, 少[すこ]しずつ食[た]べる.',
+ vs:['dandan','chotto'],
+ ex:[
+ '!毎日[まいにち] ** 勉強[べんきょう] して います 。|Каждый день понемногу занимаюсь.',
+ '!新[あたら]しい 言葉[ことば] を ** 覚[おぼ]えて います 。|Понемногу запоминаю новые слова.',
+ 'お金[かね] を ** 貯[た]めて います 。|Понемногу коплю деньги.',
+ '熱[あつ]い ので 、 ** 飲[の]んで ください 。|Горячо, так что пейте понемногу.',
+ '薬[くすり] を 飲[の]んで 、 ** 元気[げんき] に なりました 。|Принял лекарство и понемногу поправился.',
+ '大[おお]きい ケーキ を みんな で ** 食[た]べました 。|Большой торт мы ели все вместе понемногу.'
+ ]},
+{id:'dondon',t:2,w:'どんどん',ru:'всё больше и быстрее; смелее',
+ note:'Быстро, энергично, одно за другим. Ещё — подбадривание: どんどん食[た]べて！ «ешь, не стесняйся!»',
+ vs:['dandan'],
+ ex:[
+ '!日本語[にほんご] が ** 上手[じょうず] に なって います 。|Японский становится всё лучше и лучше.',
+ '!人[ひと] が ** 増[ふ]えて います 。|Людей становится всё больше.',
+ '遠慮[えんりょ] しないで 、 ** 食[た]べて ください 。|Не стесняйтесь, ешьте смелее!',
+ '質問[しつもん] が あったら 、 ** 聞[き]いて ください 。|Если есть вопросы — смело спрашивайте.',
+ '雪[ゆき] が ** 降[ふ]って きました 。|Снег повалил всё сильнее и сильнее.',
+ 'スマホ は ** 新[あたら]しく なります 。|Смартфоны обновляются всё быстрее.'
+ ]},
+// ---------- 3 ----------
+{id:'kyuuni',t:3,w:'急[きゅう]に',w2:'突然[とつぜん]',ru:'внезапно, резко',
+ note:'急[きゅう]に — разговорное, часто про перемены (急[きゅう]に寒[さむ]くなった). 突然[とつぜん] — книжнее и драматичнее, про неожиданные события.',
+ vs:['sugu'],
+ ex:[
+ '!** 雨[あめ] が 降[ふ]って きました 。|Внезапно пошёл дождь.',
+ '!*突然[とつぜん]* 、 電話[でんわ] が 鳴[な]りました 。|Внезапно зазвонил телефон.',
+ '車[くるま] が ** 止[と]まりました 。|Машина резко остановилась.',
+ '** お腹[なか] が 痛[いた]く なりました 。|Вдруг заболел живот.',
+ '*突然[とつぜん]* 、 電気[でんき] が 消[き]えました 。|Внезапно погас свет.',
+ '彼女[かのじょ] は ** 泣[な]きました 。|Она вдруг расплакалась.',
+ '昨日[きのう] 、 友達[ともだち] が *突然[とつぜん]* 家[うち] に 来[き]ました 。|Вчера друг внезапно пришёл ко мне домой.'
+ ]},
+{id:'yukkuri',t:3,w:'ゆっくり',ru:'медленно; спокойно, не торопясь',
+ note:'Два оттенка: «медленно» (ゆっくり話[はな]す) и «спокойно, с удовольствием» (ゆっくり休[やす]む). どうぞごゆっくり — «располагайтесь».',
+ vs:['hakkiri'],
+ ex:[
+ '!** 話[はな]して ください 。|Говорите медленнее, пожалуйста.',
+ '!今日[きょう] は 家[うち] で ** 休[やす]みます 。|Сегодня спокойно отдохну дома.',
+ 'どうぞ 、 ** して ください 。|Располагайтесь, не торопитесь.',
+ '週末[しゅうまつ] は ** 寝[ね]たい です 。|На выходных хочу спокойно отоспаться.',
+ 'もう 一度[いちど] 、 ** 言[い]って ください 。|Скажите ещё раз, только медленно.',
+ '階段[かいだん] を ** 降[お]りて ください 。|Спускайтесь по лестнице медленно.',
+ 'ご飯[はん] は ** 食[た]べましょう 。|Давайте есть не торопясь.'
+ ]},
+{id:'hakkiri',t:3,w:'はっきり',ru:'ясно, отчётливо, прямо',
+ note:'Чётко видно / слышно / понятно. Ещё — «прямо, без намёков»: はっきり言[い]う.',
+ vs:['yukkuri','shikkari'],
+ ex:[
+ '!** 見[み]えます 。|Отчётливо видно.',
+ '!答[こた]え が ** 分[わ]かりません 。|Я не совсем ясно понимаю ответ.',
+ '大[おお]きい 声[こえ] で ** 言[い]って ください 。|Скажите громко и чётко.',
+ '嫌[いや] なら 、 ** 言[い]って ください 。|Если не нравится — скажите прямо.',
+ '今日[きょう] は 富士山[ふじさん] が ** 見[み]えます 。|Сегодня отчётливо видно Фудзи.',
+ 'その 夢[ゆめ] は 今[いま] も ** 覚[おぼ]えて います 。|Тот сон я до сих пор ясно помню.'
+ ]},
+{id:'shikkari',t:3,w:'しっかり',ru:'основательно, крепко, хорошенько',
+ note:'Делать что-то основательно, надёжно, крепко. しっかりした人[ひと] — «собранный, надёжный человек».',
+ vs:['chanto','isshoukenmei'],
+ ex:[
+ '!** 勉強[べんきょう] して ください 。|Хорошенько занимайтесь.',
+ '!朝[あさ]ご飯[はん] を ** 食[た]べました 。|Я основательно позавтракал.',
+ 'ドア を ** 閉[し]めて ください 。|Плотно закройте дверь.',
+ '夜[よる] は ** 寝[ね]て ください 。|Ночью хорошенько высыпайтесь.',
+ '彼[かれ] は 若[わか]い けど 、 ** して います 。|Он молодой, но очень собранный.',
+ 'ベルト を ** 締[し]めて ください 。|Крепко пристегните ремень.'
+ ]},
+{id:'chanto',t:3,w:'ちゃんと',ru:'как следует, как положено (разг.)',
+ note:'«Как надо, без халтуры». Разговорное; часто в просьбах и упрёках (родители → дети).',
+ vs:['shikkari'],
+ ex:[
+ '!** 聞[き]いて ください 。|Слушайте как следует.',
+ '!宿題[しゅくだい] を ** しました 。|Я как следует сделал домашку.',
+ '野菜[やさい] も ** 食[た]べなさい 。|Ешь и овощи, как положено!',
+ '使[つか]った 物[もの] は ** 片付[かたづ]けて ね 。|Убирай за собой как следует.',
+ '薬[くすり] を ** 飲[の]んで います か 。|Вы принимаете лекарство как положено?',
+ '** 謝[あやま]って ください 。|Извинитесь нормально.'
+ ]},
+{id:'isshoukenmei',t:3,w:'一生懸命[いっしょうけんめい]',ru:'изо всех сил, усердно',
+ note:'Про старание и усилия. Можно и как на-прилагательное: 一生懸命[いっしょうけんめい]です «выкладывается полностью». Вариант 一所懸命[いっしょけんめい] (いっしょけんめい) встречается реже.',
+ vs:['shikkari'],
+ ex:[
+ '!** 働[はたら]きました 。|Я очень усердно работал.',
+ '!** 日本語[にほんご] を 話[はな]しました 。|Я изо всех сил старался говорить по-японски.',
+ '試験[しけん] の ため に ** 勉強[べんきょう] して います 。|Изо всех сил готовлюсь к экзамену.',
+ '子供[こども] たち が ** 走[はし]って います 。|Дети бегут изо всех сил.',
+ '彼[かれ] は いつも ** です 。|Он всегда выкладывается на полную.',
+ '** 練習[れんしゅう] すれば 、 上手[じょうず] に なります よ 。|Если усердно тренироваться — всё получится.'
+ ]},
+// ---------- 4 ----------
+{id:'mazu',t:4,w:'まず',ru:'сначала, прежде всего, первым делом',
+ note:'Начинает список шагов или выделяет главное: «первым делом…». После неё часто идут 次[つぎ]に / それから.',
+ vs:['saisho','hajimete'],
+ ex:[
+ '!** 名前[なまえ] を 書[か]いて ください 。|Сначала напишите имя.',
+ '!** コーヒー を 飲[の]みます 。|Сначала выпью кофе.',
+ '家[うち] に 帰[かえ]ったら 、 ** 手[て] を 洗[あら]います 。|Вернувшись домой, первым делом мою руки.',
+ '** 、 自己紹介[じこしょうかい] を お願[ねが]い します 。|Для начала представьтесь, пожалуйста.',
+ '日本[にほん] に 着[つ]いたら 、 ** ラーメン を 食[た]べたい です 。|Когда приеду в Японию, первым делом хочу съесть рамен.',
+ '** 、 お湯[ゆ] を 入[い]れて ください 。|Сначала налейте кипяток.'
+ ]},
+{id:'saisho',t:4,w:'最初[さいしょ]に',ru:'сначала, в самом начале',
+ note:'Подчёркивает порядок: «самым первым». 最初[さいしょ]は = «поначалу» (потом всё изменилось). Не путай с 初[はじ]めて — «впервые».',
+ vs:['mazu','hajimete'],
+ ex:[
+ '!** 名前[なまえ] を 書[か]いて ください 。|Сначала напишите имя.',
+ '!** この 問題[もんだい] を やりましょう 。|Сначала давайте сделаем это задание.',
+ '*最初[さいしょ]は* 日本語[にほんご] が 全然[ぜんぜん] 分[わ]かりません でした 。|Поначалу я совсем не понимал японский.',
+ '会議[かいぎ] で ** 話[はな]した の は 田中[たなか] さん です 。|Первым на совещании выступил Танака.',
+ '駅[えき] に ** 着[つ]いた の は 私[わたし] でした 。|Первым на станцию пришёл я.',
+ '*最初[さいしょ]は* 納豆[なっとう] が 苦手[にがて] でした 。|Поначалу я не любил натто.'
+ ]},
+{id:'tsugi',t:4,w:'次[つぎ]に',ru:'затем, далее; следующий',
+ note:'次[つぎ]に — «следующим шагом» (инструкции). 次[つぎ]の＋сущ. — «следующий»: 次[つぎ]の駅[えき], 次[つぎ]は… «следующий — …».',
+ vs:['sorekara'],
+ ex:[
+ '!** 、 2番[ばん] を 見[み]て ください 。|Затем посмотрите на номер 2.',
+ '!** 駅[えき] に 行[い]きます 。|Затем я пойду на станцию.',
+ '*次[つぎ]の* 駅[えき] で 降[お]ります 。|Выхожу на следующей станции.',
+ 'まず 野菜[やさい] を 切[き]ります 。 ** 、 肉[にく] を 焼[や]きます 。|Сначала режем овощи. Затем жарим мясо.',
+ '*次[つぎ]は* 私[わたし] の 番[ばん] です 。|Следующий — я.',
+ '*次[つぎ]の* 日曜日[にちようび] 、 映画[えいが] に 行[い]きません か 。|Может, сходим в кино в следующее воскресенье?'
+ ]},
+{id:'sorekara',t:4,w:'それから',ru:'потом, после этого; а ещё',
+ note:'Связывает предложения: «а после этого». При перечислении — «а ещё»: コーヒー、それからケーキ.',
+ vs:['tsugi'],
+ ex:[
+ '!ご飯[はん] を 食[た]べました 。 ** 、 勉強[べんきょう] しました 。|Я поел. Потом позанимался.',
+ '!シャワー を 浴[あ]びて 、 ** 寝[ね]ました 。|Принял душ и потом лёг спать.',
+ 'コーヒー を ください 。 ** 、 ケーキ も 。|Кофе, пожалуйста. А ещё торт.',
+ '学校[がっこう] へ 行[い]って 、 ** アルバイト に 行[い]きました 。|Сходил в школу, а потом на подработку.',
+ '京都[きょうと] に 行[い]きました 。 ** 、 大阪[おおさか] に も 行[い]きました 。|Съездил в Киото. А потом ещё и в Осаку.'
+ ]},
+{id:'sugu',t:4,w:'すぐ',ru:'сразу, сейчас же; совсем рядом',
+ note:'① Сразу, немедленно. ② Совсем рядом: すぐそこ. Не путай с もうすぐ — «скоро (событие близко)».',
+ vs:['mousugu','kyuuni'],
+ ex:[
+ '!** 行[い]きます 。|Сейчас же приду.',
+ '!コンビニ は ** そこ です 。|Конбини совсем рядом, вон там.',
+ '家[うち] に 帰[かえ]って 、 ** 寝[ね]ました 。|Вернулся домой и сразу лёг спать.',
+ 'ホテル は 駅[えき] から ** です 。|Отель совсем рядом со станцией.',
+ '分[わ]からない 言葉[ことば] は ** 調[しら]べます 。|Незнакомые слова сразу смотрю в словаре.',
+ '彼[かれ] は ** 怒[おこ]ります 。|Он сразу злится.'
+ ]},
+// ---------- 5 ----------
+{id:'tashika',t:5,w:'たしか',ru:'если не ошибаюсь, кажется',
+ note:'Говорящий что-то припоминает, но не уверен на 100%. Не путай с 確[たし]かに — «действительно, верно».',
+ vs:['tabun','kitto'],
+ ex:[
+ '!** 明日[あした] は 休[やす]み です 。|Если не ошибаюсь, завтра выходной.',
+ '!** 駅[えき] の 近[ちか]く に ありました 。|Если я правильно помню, это было возле станции.',
+ '田中[たなか] さん は ** 大阪[おおさか] 出身[しゅっしん] です 。|Танака-сан, если не ошибаюсь, из Осаки.',
+ 'あの 店[みせ] は ** 月曜日[げつようび] が 休[やす]み です 。|Тот магазин, если не путаю, по понедельникам закрыт.',
+ '彼[かれ] の 誕生日[たんじょうび] は ** 5月[がつ] です 。|Его день рождения, кажется, в мае.',
+ '前[まえ] に ** ここ に 来[き]た こと が あります 。|Если не ошибаюсь, я здесь уже бывал.'
+ ]},
+{id:'jitsuwa',t:5,w:'実[じつ]は',ru:'на самом деле, вообще-то',
+ note:'Вводит признание, секрет или неожиданную правду. Обычно стоит в начале фразы.',
+ vs:['hontou'],
+ ex:[
+ '!** 、 昨日[きのう] 休[やす]みました 。|Вообще-то вчера я не пришёл.',
+ '!** 日本語[にほんご] を 勉強[べんきょう] して います 。|На самом деле я учу японский.',
+ '** 、 お願[ねが]い が ある ん です が … |Вообще-то у меня к вам просьба…',
+ '** 、 来月[らいげつ] 結婚[けっこん] します 。|Вообще-то в следующем месяце я женюсь.',
+ '簡単[かんたん] そう です が 、 ** 難[むずか]しい です 。|Выглядит просто, но на самом деле сложно.',
+ '** 、 納豆[なっとう] が 苦手[にがて] です 。|Вообще-то я не люблю натто.'
+ ]},
+{id:'hontou',t:5,w:'本当[ほんとう]に',ru:'действительно, правда, по-настоящему',
+ note:'Усиливает искренность: 本当[ほんとう]にありがとう. 本当[ほんとう]ですか — «правда?».',
+ vs:['jitsuwa','totemo'],
+ ex:[
+ '!** ありがとう ございます 。|Правда большое спасибо.',
+ '!** おいしい です 。|Действительно вкусно.',
+ '富士山[ふじさん] は ** きれい でした 。|Фудзи была по-настоящему красивой.',
+ '** すみません でした 。|Мне правда очень жаль.',
+ 'その 話[はなし] は *本当[ほんとう]* です か 。|Эта история — правда?',
+ '日本[にほん] に 行[い]けて 、 ** うれしい です 。|Я по-настоящему рад, что смог поехать в Японию.'
+ ]},
+{id:'tokuni',t:5,w:'特[とく]に',ru:'особенно; (＋отриц.) ничего особого',
+ note:'Выделяет одно из многих. 特[とく]に〜ない — «особо не…, ничего такого».',
+ vs:['totemo'],
+ ex:[
+ '!** 日本料理[にほんりょうり] が 好[す]き です 。|Особенно люблю японскую кухню.',
+ '!** 問題[もんだい] は ありません 。|Особых проблем нет.',
+ '果物[くだもの] が 好[す]き です 。 ** いちご が 好[す]き です 。|Люблю фрукты. Особенно клубнику.',
+ '「 何[なに] か 質問[しつもん] は ？ 」 「 ** ありません 。 」|«Есть вопросы?» — «Особо нет».',
+ '今年[ことし] の 夏[なつ] は ** 暑[あつ]い です ね 。|Этим летом особенно жарко, да?',
+ 'アニメ が 好[す]き です 。 ** ジブリ が 大好[だいす]き です 。|Люблю аниме. Особенно обожаю Гибли.'
+ ]},
+{id:'mochiron',t:5,w:'もちろん',ru:'конечно',
+ note:'«Разумеется». Частый короткий ответ: 「いい？」「もちろん！」',
+ vs:['kitto','zettai'],
+ ex:[
+ '!** 行[い]きます 。|Конечно, пойду.',
+ '!これ は ** 無料[むりょう] です 。|Это, конечно, бесплатно.',
+ '「 手伝[てつだ]って くれる ？ 」 「 ** ！ 」|«Поможешь?» — «Конечно!»',
+ '** 、 いい です よ 。|Конечно, можно.',
+ '日本語[にほんご] は ** 、 英語[えいご] も 話[はな]せます 。|Говорю, конечно, по-японски, а ещё и по-английски.',
+ '「 一緒[いっしょ] に 行[い]く ？ 」 「 ** 。 」|«Пойдёшь со мной?» — «Конечно».'
+ ]},
+{id:'kitto',t:5,w:'きっと',ru:'наверняка, непременно',
+ note:'Сильная уверенность говорящего (≈ 80–90%). Часто с 〜と思[おも]う / 〜でしょう. Сильнее, чем たぶん.',
+ vs:['tabun','zettai','tashika'],
+ ex:[
+ '!** 大丈夫[だいじょうぶ] です 。|Наверняка всё будет хорошо.',
+ '!彼[かれ] は ** 来[き]ます 。|Он наверняка придёт.',
+ '明日[あした] は ** 晴[は]れる でしょう 。|Завтра наверняка будет ясно.',
+ '毎日[まいにち] 練習[れんしゅう] すれば 、 ** 上手[じょうず] に なります よ 。|Если тренироваться каждый день, наверняка получится.',
+ 'あなた なら ** 試験[しけん] に 合格[ごうかく] できます よ 。|Ты-то наверняка сдашь экзамен!',
+ '彼女[かのじょ] は ** 喜[よろこ]ぶ と 思[おも]います 。|Думаю, она наверняка обрадуется.'
+ ]},
+// ---------- 6 ----------
+{id:'sakki',t:6,w:'さっき',ru:'только что, совсем недавно',
+ note:'Про то, что было минуты или часы назад, сегодня. Разговорное. 最近[さいきん] — про последние недели и месяцы.',
+ vs:['saikin','mou'],
+ ex:[
+ '!** 起[お]きました 。|Только что проснулся.',
+ '!** ご飯[はん] を 食[た]べました 。|Я совсем недавно поел.',
+ '** 田中[たなか] さん から 電話[でんわ] が ありました 。|Только что звонил Танака.',
+ '** の 話[はなし] 、 もう 一度[いちど] お願[ねが]い します 。|То, что вы только что сказали, повторите, пожалуйста.',
+ '** まで ここ に いました よ 。|Он был здесь буквально только что.',
+ '** 言[い]った でしょう ？|Я же только что сказал!'
+ ]},
+{id:'saikin',t:6,w:'最近[さいきん]',ru:'в последнее время; недавно (на днях)',
+ note:'Отрезок «последних недель/месяцев». Часто с настоящим временем: 最近[さいきん]忙[いそが]しい. Не для того, что было час назад (это さっき).',
+ vs:['sakki','shibaraku'],
+ ex:[
+ '!** 忙[いそが]しい です 。|В последнее время я занят.',
+ '!** 、 寒[さむ]く なりました ね 。|В последнее время похолодало, да?',
+ '** 、 よく 眠[ねむ]れません 。|В последнее время плохо сплю.',
+ '** 、 料理[りょうり] を 始[はじ]めました 。|На днях начал готовить.',
+ '** 、 どう です か 。|Как дела в последнее время?',
+ '** 、 日本[にほん] の 映画[えいが] を よく 見[み]ます 。|В последнее время часто смотрю японские фильмы.'
+ ]},
+{id:'shibaraku',t:6,w:'しばらく',ru:'некоторое время',
+ note:'Промежуток времени — от минут до месяцев. しばらくですね — «давно не виделись».',
+ vs:['chotto','saikin'],
+ ex:[
+ '!** 待[ま]って ください 。|Подождите некоторое время.|chotto',
+ '!** 日本語[にほんご] を 勉強[べんきょう] して いません 。|Какое-то время не занимался японским.',
+ '** です ね 。 元気[げんき] でした か 。|Давно не виделись! Как поживали?',
+ '雨[あめ] が やむ まで 、 ** ここ に いましょう 。|Побудем здесь какое-то время, пока не кончится дождь.',
+ '薬[くすり] を 飲[の]んで 、 ** 休[やす]んで ください 。|Примите лекарство и отдохните некоторое время.',
+ '引[ひ]っ越[こ]して 、 ** 大変[たいへん] でした 。|После переезда какое-то время было тяжело.'
+ ]},
+{id:'zehi',t:6,w:'ぜひ',ru:'непременно, обязательно (желание, приглашение)',
+ note:'Только с желанием, просьбой, приглашением: 〜てください / 〜たい / 〜ましょう. Всегда позитивное — с запретами не используется!',
+ vs:['zettai'],
+ ex:[
+ '!** 日本[にほん] に 来[き]て ください 。|Непременно приезжайте в Японию.',
+ '!** たこ焼[や]き を 食[た]べて みて ください 。|Обязательно попробуйте такояки.',
+ '** 一度[いちど] 行[い]って みたい です 。|Очень хочу хоть раз туда съездить.',
+ 'また ** 遊[あそ]び に 来[き]て ね 。|Непременно приходи ещё в гости.',
+ '「 パーティー に 来[き]ません か 。 」 「 ** ！ 」|«Не придёте на вечеринку?» — «С удовольствием!»|mochiron',
+ '今度[こんど] 、 ** 一緒[いっしょ] に 行[い]きましょう 。|В следующий раз непременно сходим вместе.'
+ ]},
+{id:'zettai',t:6,w:'絶対[ぜったい]に',ru:'обязательно, точно; ни в коем случае',
+ note:'Уверенность на 100% или жёсткий запрет. С отрицанием — «ни за что, ни в коем случае». В отличие от ぜひ, бывает и про запреты.',
+ vs:['zehi','kitto'],
+ ex:[
+ '!** 忘[わす]れないで ください 。|Ни в коем случае не забудьте.',
+ '!** 行[い]きます 。|Во что бы то ни стало приду.',
+ 'この こと は ** 言[い]わないで ね 。|Об этом ни за что никому не говори.',
+ '次[つぎ] は ** 勝[か]ちます ！|В следующий раз я точно выиграю!',
+ 'ここ で タバコ は ** だめ です 。|Курить здесь категорически нельзя.',
+ 'あの 店[みせ] には ** 行[い]きたく ない 。|В тот магазин я ни за что не пойду.'
+ ]},
+{id:'dekirudake',t:6,w:'できるだけ',ru:'как можно…, по возможности',
+ note:'«Насколько получится». Часто: できるだけ早[はや]く, できるだけたくさん, できるだけ〜ようにする.',
+ vs:['zettai'],
+ ex:[
+ '!** 早[はや]く 来[き]て ください 。|Приходите как можно скорее.',
+ '!** たくさん 話[はな]して ください 。|Постарайтесь говорить как можно больше.',
+ '** 日本語[にほんご] で 話[はな]しましょう 。|Давайте по возможности говорить по-японски.',
+ '野菜[やさい] を ** 食[た]べる よう に して います 。|Стараюсь по возможности есть овощи.',
+ '** 安[やす]い ホテル が いい です 。|Хорошо бы отель как можно дешевле.',
+ '夜[よる] は ** 早[はや]く 寝[ね]ます 。|Вечером ложусь как можно раньше.'
+ ]},
+// ---------- 7 ----------
+{id:'taitei',t:7,w:'たいてい',ru:'обычно, как правило',
+ note:'«В большинстве случаев» (≈ 80%). Почти いつも, но не всегда.',
+ vs:['futsuu'],
+ ex:[
+ '!日曜日[にちようび] は ** 家[うち] に います 。|По воскресеньям я обычно дома.',
+ '!** 9時[じ] に 寝[ね]ます 。|Как правило, я ложусь в девять.',
+ '朝[あさ] は ** パン を 食[た]べます 。|Утром обычно ем хлеб.',
+ '週末[しゅうまつ] は ** 友達[ともだち] と 会[あ]います 。|На выходных я обычно встречаюсь с друзьями.',
+ '学校[がっこう] へ は ** バス で 行[い]きます 。|В школу я обычно езжу на автобусе.',
+ 'この 時間[じかん] 、 電車[でんしゃ] は ** 混[こ]んで います 。|В это время электрички обычно переполнены.'
+ ]},
+{id:'tabun',t:7,w:'たぶん',ru:'наверное, вероятно, может быть',
+ note:'Уверенность примерно 50–70%. Часто в паре с 〜でしょう / 〜と思[おも]う. Слабее, чем きっと.',
+ vs:['kitto','tashika'],
+ ex:[
+ '!明日[あした] は ** 雪[ゆき] でしょう 。|Завтра, наверное, будет снег.',
+ '!彼[かれ] は ** 来[き]ません 。|Он, вероятно, не придёт.',
+ '** 大丈夫[だいじょうぶ] だ と 思[おも]います 。|Думаю, наверное, всё в порядке.',
+ '田中[たなか] さん は ** 図書館[としょかん] に いる と 思[おも]います 。|Танака-сан, наверное, в библиотеке.',
+ '「 明日[あした] 来[く]る ？ 」 「 うーん 、 ** 。 」|«Завтра придёшь?» — «Хм, может быть».',
+ '** 道[みち] が 混[こ]んで います ね 。|Наверное, дороги забиты.'
+ ]},
+{id:'hajimete',t:7,w:'初[はじ]めて',ru:'впервые',
+ note:'«В первый раз» — про опыт. Не путай с 最初[さいしょ]に / はじめに — «сначала, в начале». はじめまして — от того же корня.',
+ vs:['saisho','mazu'],
+ ex:[
+ '!** 日本[にほん] に 行[い]きました 。|Я впервые поехал в Японию.',
+ '!** 日本語[にほんご] を 話[はな]しました 。|Впервые говорил по-японски.',
+ '納豆[なっとう] を ** 食[た]べました 。|Впервые попробовал натто.',
+ 'こんな に きれい な 海[うみ] は ** 見[み]ました 。|Такое красивое море вижу впервые.',
+ '一人[ひとり] で 旅行[りょこう] する の は ** です 。|Путешествую один впервые.',
+ '** 会[あ]った 日[ひ] を 覚[おぼ]えて います か 。|Помнишь день, когда мы впервые встретились?'
+ ]},
+{id:'choudo',t:7,w:'ちょうど',ru:'как раз, ровно',
+ note:'Точно, без лишнего: ちょうど3時[じ] «ровно три», ちょうどいい «в самый раз», ちょうど今[いま] «как раз сейчас».',
+ vs:['zenbu'],
+ ex:[
+ '!今[いま] ** 3時[じ] です 。|Сейчас ровно три часа.',
+ '!この 靴[くつ] は ** いい です 。|Эта обувь мне как раз.',
+ '** 今[いま] 、 電話[でんわ] しよう と 思[おも]って いました 。|Я как раз сейчас собирался позвонить.',
+ 'お会計[かいけい] は ** 1000円[えん] です 。|С вас ровно тысяча иен.',
+ '駅[えき] に 着[つ]いた 時[とき] 、 ** 電車[でんしゃ] が 来[き]ました 。|Когда я пришёл на станцию, как раз подошла электричка.',
+ 'お風呂[ふろ] は ** いい 温度[おんど] です 。|Вода в ванне как раз нужной температуры.'
+ ]},
+{id:'zenbu',t:7,w:'全部[ぜんぶ]',ru:'всё, целиком',
+ note:'Строго говоря, существительное, но часто работает как наречие: 全部[ぜんぶ]食[た]べた. 全部[ぜんぶ]で — «всего, в сумме».',
+ vs:['choudo'],
+ ex:[
+ '!** 食[た]べました 。|Всё съел.',
+ '!宿題[しゅくだい] を ** しました 。|Сделал всю домашку.',
+ '** で いくら です か 。|Сколько всего стоит?',
+ 'この 本[ほん] は ** 読[よ]みました 。|Эту книгу прочитал целиком.',
+ 'お金[かね] を ** 使[つか]って しまいました 。|Потратил все деньги.',
+ '先生[せんせい] の 説明[せつめい] 、 ** 分[わ]かりました 。|Объяснение учителя понял полностью.'
+ ]},
+{id:'tatoeba',t:7,w:'例[たと]えば',ru:'например',
+ note:'Приводит пример к уже названной теме. Сам по себе (без темы) звучит странно: сначала тема, потом 例[たと]えば.',
+ vs:['tokuni'],
+ ex:[
+ '!日本[にほん] の 食[た]べ物[もの] 、 ** すし や ラーメン が 好[す]き です 。|Из японской еды я люблю, например, суши и рамен.',
+ '!有名[ゆうめい] な 料理[りょうり] は 、 ** すし や ラーメン が あります 。|Из известных блюд есть, например, суши и рамен.',
+ '果物[くだもの] 、 ** りんご や みかん を 買[か]いました 。|Купил фрукты — например, яблоки и мандарины.',
+ '運動[うんどう] なら 、 ** ジョギング は どう です か 。|Если про спорт — как насчёт, например, пробежки?',
+ '旅行[りょこう] なら 、 ** 京都[きょうと] は どう です か 。|Если путешествовать — как насчёт, например, Киото?',
+ '冬[ふゆ] の スポーツ 、 ** スキー が 好[す]き です 。|Из зимних видов спорта люблю, например, лыжи.'
+ ]},
+// ---------- 8 ----------
+{id:'hotondo',t:8,w:'ほとんど',suf:'〜ない',ru:'почти не; почти всё',
+ note:'С отрицанием — «почти не…». Без отрицания — «почти всё / почти полностью» (ほとんど終[お]わった).',
+ vs:['ichidomo','sonnani','zenbu'],
+ ex:[
+ '!テレビ は ** 見[み]ません 。|Я почти не смотрю телевизор.',
+ '!その 映画[えいが] は ** 覚[おぼ]えて いません 。|Я почти не помню тот фильм.',
+ 'お金[かね] が ** ありません 。|Денег почти нет.',
+ '昨日[きのう] は ** 寝[ね]て いません 。|Вчера я почти не спал.',
+ '彼[かれ] は お酒[さけ] を ** 飲[の]みません 。|Он почти не пьёт алкоголь.',
+ '宿題[しゅくだい] は ** 終[お]わりました 。|Домашка почти закончена.'
+ ]},
+{id:'ichidomo',t:8,w:'一度[いちど]も',suf:'〜ない',ru:'ни разу',
+ note:'Только с отрицанием. Чаще всего в конструкции 〜たことがない: 一度[いちど]も行[い]ったことがない.',
+ vs:['hotondo','nandomo'],
+ ex:[
+ '!日本[にほん] に ** 行[い]った こと が ありません 。|Я ни разу не был в Японии.',
+ '!** 見[み]た こと が ありません 。|Я ни разу этого не видел.',
+ '彼[かれ] は ** 遅刻[ちこく] した こと が ありません 。|Он ни разу не опаздывал.',
+ '納豆[なっとう] は ** 食[た]べた こと が ない 。|Натто я ни разу не ел.',
+ '今年[ことし] は ** 雪[ゆき] が 降[ふ]りません でした 。|В этом году снег не выпал ни разу.',
+ 'この 歌[うた] は ** 聞[き]いた こと が ありません 。|Эту песню я ни разу не слышал.'
+ ]},
+{id:'nandomo',t:8,w:'何度[なんど]も',ru:'много раз, неоднократно',
+ note:'Противоположность 一度[いちど]も〜ない. Можно и 何回[なんかい]も.',
+ vs:['ichidomo','mata'],
+ ex:[
+ '!この 映画[えいが] を ** 見[み]ました 。|Я много раз смотрел этот фильм.',
+ '!イタリア に ** 行[い]った こと が あります 。|Я неоднократно бывал в Италии.',
+ '** 電話[でんわ] した けど 、 出[で]ません でした 。|Звонил много раз, но он не ответил.',
+ '同[おな]じ 間違[まちが]い を ** して しまいます 。|Снова и снова делаю одну и ту же ошибку.',
+ '新[あたら]しい 言葉[ことば] は ** 書[か]いて 覚[おぼ]えます 。|Новые слова запоминаю, записывая их много раз.',
+ 'この 歌[うた] は ** 聞[き]きました 。|Эту песню я слушал много раз.'
+ ]},
+{id:'mou',t:8,w:'もう',ru:'уже; ещё (＋количество)',
+ note:'① «Уже» — с прошедшим или 〜ている. ② «Ещё» — перед количеством: もう少[すこ]し, もう一[ひと]つ. Пара: もう ↔ まだ.',
+ vs:['mada','mousugu','motto'],
+ ex:[
+ '!** 朝[あさ]ご飯[はん] を 食[た]べました 。|Я уже позавтракал.',
+ '!** ちょっと 、 がんばって ！|Ещё чуть-чуть, держись!',
+ '** 12時[じ] です よ 。 早[はや]く 寝[ね]なさい 。|Уже двенадцать! Быстро спать.',
+ '宿題[しゅくだい] は ** 終[お]わりました か 。|Ты уже закончил домашку?',
+ '** 一[ひと]つ ください 。|Дайте ещё одну.',
+ '「 まだ 痛[いた]い ？ 」 「 いいえ 、 ** 大丈夫[だいじょうぶ] 。 」|«Ещё болит?» — «Нет, уже всё в порядке».'
+ ]},
+{id:'mouichido',t:8,w:'もう一度[いちど]',w2:'もう一回[いっかい]',ru:'ещё раз',
+ note:'Повторить действие ещё раз (часто в просьбах). もう一回[いっかい] — разговорнее. また — «снова» в целом, без «ещё один раз прямо сейчас».',
+ vs:['mata','nandomo'],
+ ex:[
+ '!** 言[い]って ください 。|Скажите ещё раз.',
+ '!** 、 お願[ねが]い します 。|Ещё раз, пожалуйста.',
+ '*もう一回[いっかい]* やって みよう ！|Давай попробуем ещё разок!',
+ 'その 映画[えいが] 、 ** 見[み]たい な 。|Хочу посмотреть тот фильм ещё раз.',
+ '** 確認[かくにん] して ください 。|Проверьте ещё раз.',
+ '試験[しけん] に 落[お]ちた けど 、 来年[らいねん] ** 受[う]けます 。|Провалил экзамен, но в следующем году сдам ещё раз.'
+ ]},
+{id:'mousugu',t:8,w:'もうすぐ',ru:'уже скоро, вот-вот',
+ note:'Событие близко по времени: もうすぐ夏[なつ]. すぐ — «сразу, немедленно» (про реакцию/действие).',
+ vs:['sugu','mou'],
+ ex:[
+ '!** 夏[なつ] です 。|Уже скоро лето.',
+ '!電車[でんしゃ] が ** 来[き]ます 。|Поезд скоро прибудет.',
+ '** 誕生日[たんじょうび] です ね 。|Скоро твой день рождения, да?',
+ '** 試験[しけん] です から 、 がんばります 。|Скоро экзамен, так что стараюсь.',
+ '映画[えいが] が ** 始[はじ]まります よ 。|Фильм вот-вот начнётся!',
+ '** 着[つ]きます 。 待[ま]って いて ください 。|Скоро буду. Подождите меня.'
+ ]},
+{id:'mada',t:8,w:'まだ',ru:'ещё, всё ещё; ещё не',
+ note:'С утверждением — «всё ещё» (まだ雨[あめ]が降[ふ]っている). С отрицанием — «ещё не» (まだ〜ていません). Ответ на «уже?»: いいえ、まだです.',
+ vs:['mou','mata','motto'],
+ ex:[
+ '!** 雨[あめ] が 降[ふ]って います 。|Всё ещё идёт дождь.',
+ '!** 宿題[しゅくだい] を して いません 。|Я ещё не сделал домашку.',
+ '「 もう 食[た]べました か 。 」 「 いいえ 、 ** です 。 」|«Уже поел?» — «Нет, ещё нет».',
+ '11時[じ] です が 、 ** 眠[ねむ]く ない です 。|Уже одиннадцать, но спать ещё не хочется.',
+ '私[わたし] の 日本語[にほんご] は ** 下手[へた] です 。|Мой японский пока ещё слабый.',
+ '** 時間[じかん] が あります よ 。|Время ещё есть.'
+ ]},
+{id:'mata',t:8,w:'また',ru:'снова, опять',
+ note:'Повторение события: «снова, опять». また明日[あした]！ — «до завтра!». Не путай: まだ — «ещё/ещё не», もっと — «больше».',
+ vs:['mada','mouichido','motto'],
+ ex:[
+ '!** 会[あ]いましょう 。|Давайте снова увидимся.',
+ '!** 日本[にほん] に 行[い]きたい です 。|Хочу снова поехать в Японию.',
+ 'じゃ 、 ** 明日[あした] ！|Ну, до завтра!',
+ '** 遅刻[ちこく] した の ？|Ты опять опоздал?',
+ '** 雨[あめ] です ね 。|Опять дождь, да?',
+ '** 財布[さいふ] を 忘[わす]れました 。|Я опять забыл кошелёк.'
+ ]}
+];
+
+// Groups of near-synonyms: never offered as wrong options against each other.
+const CLASH = [
+ ['totemo','sugoku','kanari','hontou','nakanaka'],
+ ['dandan','sukoshizutsu'],
+ ['shikkari','chanto'],
+ ['mazu','saisho'],
+ ['tsugi','sorekara'],
+ ['zehi','zettai'],
+ ['taitei','futsuu'],
+ ['mouichido','mata'],
+ ['sakki','saikin']
+];
+
+// "Не путай!" — contrast drills. ctx = situation in Russian, s = sentence with slot, a = answer id.
+const PAIRS = [
+ {ids:['mou','mada'], title:'もう или まだ?',
+  rule:'もう — «уже» (действие произошло). まだ — «ещё/ещё не» (пока не произошло или продолжается). На вопрос «もう〜ましたか» отвечают «はい、もう〜ました» или «いいえ、まだです».',
+  q:[
+  {ctx:'Ты поел час назад.', s:'** 食[た]べました 。', a:'mou'},
+  {ctx:'Ты ещё не начинал домашку.', s:'** 宿題[しゅくだい] を して いません 。', a:'mada'},
+  {ctx:'Дождь начался утром и идёт до сих пор.', s:'** 雨[あめ] が 降[ふ]って います 。', a:'mada'},
+  {ctx:'Друг спрашивает, не устал ли ты. Ты полон сил.', s:'いいえ 、 ** 元気[げんき] です よ 。', a:'mada'},
+  {ctx:'Ты просишь продавца дать ещё одно яблоко.', s:'** 一[ひと]つ ください 。', a:'mou'},
+  {ctx:'Фильм кончился, все ушли домой.', s:'みんな ** 帰[かえ]りました 。', a:'mou'}
+  ]},
+ {ids:['tabun','kitto','tashika'], title:'たぶん, きっと или たしか?',
+  rule:'たぶん — «наверное» (≈50–70%). きっと — «наверняка» (≈90%, сильная вера). たしか — «если не ошибаюсь»: ты вспоминаешь факт, но память может подвести.',
+  q:[
+  {ctx:'Ты почти уверен в друге: он всегда держит слово.', s:'彼[かれ] は ** 来[き]ます よ 。', a:'kitto'},
+  {ctx:'Ты не знаешь точно, придёт ли он. Шансы примерно пополам.', s:'彼[かれ] は ** 来[き]ない でしょう 。', a:'tabun'},
+  {ctx:'Ты вспоминаешь, что вроде бы читал: магазин закрыт по понедельникам.', s:'あの 店[みせ] は ** 月曜日[げつようび] が 休[やす]み です 。', a:'tashika'},
+  {ctx:'Подбадриваешь подругу перед экзаменом.', s:'あなた なら ** 合格[ごうかく] できます ！', a:'kitto'},
+  {ctx:'По прогнозу то ли снег, то ли дождь.', s:'明日[あした] は ** 雪[ゆき] でしょう 。', a:'tabun'},
+  {ctx:'Пытаешься вспомнить, когда у Тани день рождения.', s:'** 5月[がつ] だった と 思[おも]います 。', a:'tashika'}
+  ]},
+ {ids:['zehi','zettai'], title:'ぜひ или 絶対[ぜったい]に?',
+  rule:'ぜひ — тёплое «непременно» в приглашениях и желаниях (〜てください, 〜たい). Запреты с ぜひ невозможны. 絶対[ぜったい]に — «на 100%», в том числе в запретах: 絶対[ぜったい]に〜ないで.',
+  q:[
+  {ctx:'Приглашаешь нового знакомого в гости.', s:'** 遊[あそ]び に 来[き]て ください 。', a:'zehi'},
+  {ctx:'Строго предупреждаешь: этот пароль нельзя никому говорить.', s:'** 誰[だれ] に も 言[い]わないで 。', a:'zettai'},
+  {ctx:'Мечтаешь когда-нибудь увидеть Фудзи.', s:'** 富士山[ふじさん] を 見[み]たい です 。', a:'zehi'},
+  {ctx:'Даёшь себе твёрдое обещание выиграть.', s:'次[つぎ] は ** 勝[か]ちます ！', a:'zettai'},
+  {ctx:'Советуешь гостю попробовать местное блюдо.', s:'** 食[た]べて みて ください 。', a:'zehi'}
+  ]},
+ {ids:['sakki','saikin'], title:'さっき или 最近[さいきん]?',
+  rule:'さっき — минуты или часы назад, сегодня. 最近[さいきん] — последние недели и месяцы; часто описывает состояние: 最近[さいきん]忙[いそが]しい.',
+  q:[
+  {ctx:'Ты проснулся 10 минут назад.', s:'** 起[お]きました 。', a:'sakki'},
+  {ctx:'Уже месяц у тебя много работы.', s:'** 忙[いそが]しい です 。', a:'saikin'},
+  {ctx:'Друг звонил полчаса назад.', s:'** 電話[でんわ] が ありました よ 。', a:'sakki'},
+  {ctx:'Последние недели ты плохо спишь.', s:'** よく 眠[ねむ]れません 。', a:'saikin'},
+  {ctx:'Учитель повторяет слова, сказанные минуту назад.', s:'** 言[い]った でしょう ？', a:'sakki'}
+  ]},
+ {ids:['sugu','mousugu'], title:'すぐ или もうすぐ?',
+  rule:'すぐ — «сразу, немедленно» после чего-то, или «совсем рядом». もうすぐ — «скоро»: событие приближается само (лето, поезд, день рождения).',
+  q:[
+  {ctx:'Через неделю начнётся лето.', s:'** 夏[なつ] です ね 。', a:'mousugu'},
+  {ctx:'Мама зовёт. Ты отвечаешь, что идёшь немедленно.', s:'** 行[い]きます ！', a:'sugu'},
+  {ctx:'Магазин в двух шагах.', s:'コンビニ は ** そこ です 。', a:'sugu'},
+  {ctx:'Через пару минут прибудет поезд.', s:'電車[でんしゃ] が ** 来[き]ます 。', a:'mousugu'},
+  {ctx:'Пришёл домой и тут же уснул.', s:'家[うち] に 帰[かえ]って 、 ** 寝[ね]ました 。', a:'sugu'}
+  ]},
+ {ids:['mata','mouichido','mada'], title:'また, もう一度[いちど] или まだ?',
+  rule:'また — «снова, опять» (событие повторилось или повторится когда-то). もう一度[いちど] — «ещё раз» (сделай/повтори это действие). まだ — «ещё, всё ещё, ещё не».',
+  q:[
+  {ctx:'Ты не расслышал и просишь повторить.', s:'** 言[い]って ください 。', a:'mouichido'},
+  {ctx:'Прощаешься с другом до завтра.', s:'じゃ 、 ** 明日[あした] ！', a:'mata'},
+  {ctx:'Уже 10 вечера, а брат всё ещё играет.', s:'弟[おとうと] は ** ゲーム を して います 。', a:'mada'},
+  {ctx:'Коллега опоздал уже в третий раз.', s:'** 遅刻[ちこく] です か 。', a:'mata'},
+  {ctx:'Ответ неверный — пробуешь решить задачу заново.', s:'** やって みます 。', a:'mouichido'}
+  ]},
+ {ids:['mazu','saisho','hajimete'], title:'まず, 最初[さいしょ]に или 初[はじ]めて?',
+  rule:'まず — «первым делом» (шаг 1 инструкции или главное). 最初[さいしょ]に — «в самом начале, первым по порядку»; 最初[さいしょ]は — «поначалу». 初[はじ]めて — «впервые в жизни» (опыт).',
+  q:[
+  {ctx:'Ты впервые в жизни ел суши.', s:'** すし を 食[た]べました 。', a:'hajimete'},
+  {ctx:'Поначалу японский казался скучным, а теперь нравится.', s:'*最初[さいしょ]は* 日本語[にほんご] が つまらなかった です 。', a:'saisho'},
+  {ctx:'Инструкция: шаг 1 — помыть руки.', s:'** 手[て] を 洗[あら]って ください 。', a:'mazu'},
+  {ctx:'Ты впервые увидел снег.', s:'** 雪[ゆき] を 見[み]ました 。', a:'hajimete'},
+  {ctx:'На собрании выступили трое; Танака выступил первым.', s:'** 話[はな]した の は 田中[たなか] さん です 。', a:'saisho'}
+  ]},
+ {ids:['dandan','dondon','sukoshizutsu'], title:'だんだん, どんどん или 少[すこ]しずつ?',
+  rule:'だんだん — плавно, само собой (погода, чувства). どんどん — быстро и активно, «всё больше и больше». 少[すこ]しずつ — маленькими порциями, своими усилиями.',
+  q:[
+  {ctx:'Каждый день учишь по 3 новых слова.', s:'毎日[まいにち] ** 覚[おぼ]えて います 。', a:'sukoshizutsu'},
+  {ctx:'Осенью дни плавно становятся короче и холоднее.', s:'** 寒[さむ]く なりました 。', a:'dandan'},
+  {ctx:'Хозяйка угощает: «Ешьте, не стесняйтесь!»', s:'** 食[た]べて ください ！', a:'dondon'},
+  {ctx:'Чай очень горячий — пей маленькими глотками.', s:'** 飲[の]んで ね 。', a:'sukoshizutsu'},
+  {ctx:'Город быстро растёт, людей прибавляется на глазах.', s:'人[ひと] が ** 増[ふ]えて います 。', a:'dondon'}
+  ]},
+ {ids:['chanto','shikkari','isshoukenmei'], title:'ちゃんと, しっかり или 一生懸命[いっしょうけんめい]?',
+  rule:'ちゃんと — «как положено, без халтуры» (разговорно). しっかり — «основательно, крепко, надёжно». 一生懸命[いっしょうけんめい] — «изо всех сил», про усилия и старание.',
+  q:[
+  {ctx:'Мама ругает: убери комнату как положено!', s:'部屋[へや] を ** 片付[かたづ]けて ！', a:'chanto'},
+  {ctx:'Спортсмен бежит из последних сил.', s:'** 走[はし]りました 。', a:'isshoukenmei'},
+  {ctx:'В самолёте: крепко пристегните ремень.', s:'ベルト を ** 締[し]めて ください 。', a:'shikkari'},
+  {ctx:'Хвалишь младшую сестру: она очень надёжная и собранная.', s:'妹[いもうと] は ** して います 。', a:'shikkari'},
+  {ctx:'Все трудились, не жалея сил.', s:'みんな ** 働[はたら]きました 。', a:'isshoukenmei'}
+  ]},
+ {ids:['hotondo','ichidomo','sonnani'], title:'ほとんど, 一度[いちど]も или そんなに?',
+  rule:'Все трое любят отрицание. ほとんど〜ない — «почти не» (очень редко/мало). 一度[いちど]も〜ない — «ни разу» (ноль). そんなに〜ない — «не так уж» (меньше, чем можно подумать).',
+  q:[
+  {ctx:'Ты никогда в жизни не был в Японии.', s:'日本[にほん] に ** 行[い]った こと が ありません 。', a:'ichidomo'},
+  {ctx:'Телевизор смотришь раз в месяц.', s:'テレビ は ** 見[み]ません 。', a:'hotondo'},
+  {ctx:'Все боятся экзамена, а ты считаешь, что он средний.', s:'** 難[むずか]しく ない よ 。', a:'sonnani'},
+  {ctx:'В кошельке осталось 10 иен.', s:'お金[かね] が ** ありません 。', a:'hotondo'},
+  {ctx:'Он не опоздал за весь год ни на минуту.', s:'彼[かれ] は ** 遅刻[ちこく] しません でした 。', a:'ichidomo'}
+  ]},
+ {ids:['motto','zutto'], title:'もっと или ずっと?',
+  rule:'もっと — «ещё больше, чем сейчас» (хочу/надо больше). ずっと — «всё время» или «намного» при сравнении двух вещей (AはBよりずっと…).',
+  q:[
+  {ctx:'Хочешь заниматься больше, чем сейчас.', s:'** 勉強[べんきょう] したい です 。', a:'motto'},
+  {ctx:'Шёл дождь с утра до вечера без остановки.', s:'朝[あさ] から ** 雨[あめ] でした 。', a:'zutto'},
+  {ctx:'Сравниваешь: Токио гораздо больше твоего города.', s:'東京[とうきょう] は 私[わたし] の 町[まち] より ** 大[おお]きい です 。', a:'zutto'},
+  {ctx:'Просишь в магазине вещь поменьше и подешевле.', s:'** 安[やす]い の は ありません か 。', a:'motto'}
+  ]},
+ {ids:['taitei','futsuu'], title:'たいてい или 普通[ふつう]?',
+  rule:'たいてい — «обычно, в большинстве случаев» (про привычки). 普通[ふつう] — «обычный, как у всех принято»; 普通[ふつう]の＋сущ.',
+  q:[
+  {ctx:'Заказываешь кофе без добавок и сиропов.', s:'** の コーヒー を ください 。', a:'futsuu'},
+  {ctx:'По воскресеньям ты почти всегда дома.', s:'日曜日[にちようび] は ** 家[うち] に います 。', a:'taitei'},
+  {ctx:'Говоришь, что это ничем не примечательная еда.', s:'これ は ** の ご飯[はん] です 。', a:'futsuu'},
+  {ctx:'Ты почти всегда ложишься в 11.', s:'** 11時[じ] に 寝[ね]ます 。', a:'taitei'}
+  ]},
+ {ids:['tsugi','sorekara'], title:'次[つぎ]に или それから?',
+  rule:'次[つぎ]に — «следующим шагом» в инструкции; 次[つぎ]の — «следующий». それから — «а потом, после этого» в рассказе; при перечислении — «а ещё».',
+  q:[
+  {ctx:'Заказываешь кофе и добавляешь: «А ещё торт».', s:'コーヒー 、 ** ケーキ も ください 。', a:'sorekara'},
+  {ctx:'Объявление в поезде: «Следующая станция — Сибуя».', s:'*次[つぎ]は* 渋谷[しぶや] です 。', a:'tsugi'},
+  {ctx:'Рассказываешь вечер: поужинал, а потом смотрел кино.', s:'ご飯[はん] を 食[た]べて 、 ** 映画[えいが] を 見[み]ました 。', a:'sorekara'},
+  {ctx:'Читаешь рецепт: шаг 2 — добавить соль.', s:'** 、 塩[しお] を 入[い]れます 。', a:'tsugi'}
+  ]},
+ {ids:['totemo','sugoku','kanari'], title:'とても, すごく или かなり?',
+  rule:'Все значат «очень», но: とても — нейтральное и вежливое. すごく — разговорное и эмоциональное, с друзьями. かなり — «заметно, прилично», более сдержанно и объективно.',
+  q:[
+  {ctx:'Пишешь вежливое письмо учителю: «урок был очень интересным».', s:'授業[じゅぎょう] は ** 面白[おもしろ]かった です 。', a:'totemo'},
+  {ctx:'Кричишь другу на концерте: «Это безумно круто!»', s:'** かっこいい ！', a:'sugoku'},
+  {ctx:'Спокойно оцениваешь: до станции прилично идти (минут 30).', s:'駅[えき] まで ** 遠[とお]い です ね 。', a:'kanari'},
+  {ctx:'Рассказываешь подруге с эмоциями: торт офигенно вкусный!', s:'この ケーキ 、 ** おいしい ！', a:'sugoku'}
+  ]}
+];
+
+// Glossary. Kana keys match exactly; keys starting with kanji also match as a prefix (stem of a verb/adjective).
+const GLOSS = {
+// particles & grammar
+'は':'частица темы («что касается…»)','が':'частица подлежащего','を':'частица прямого дополнения','に':'частица: в / к / во столько-то','で':'частица: в (месте), на (транспорте), чем','へ':'частица направления: в / к','と':'частица: и / с (кем-то) / цитата','も':'тоже, и','の':'частица принадлежности («…ого»); также «тот, что»','から':'с / от; потому что','まで':'до','より':'чем (сравнение)','や':'и (неполный перечень)','ね':'…да? правда? (ищет согласия)','よ':'…же! (сообщает новое)','か':'вопросительная частица','な':'…а? (размышление вслух)','では':'в (месте) — с выделением','には':'в / к — с выделением','なら':'если речь о…','けど':'но, хотя','ので':'так как, поэтому','ん':'(объяснительный оттенок) ん です が = «дело в том, что…»','ほう':'сторона; のほうが = «…более» / ほうがいい = «лучше»','よう':'так, чтобы; ようになる = «стать способным»; ようにする = «стараться»','こと':'факт, дело; 〜たことがある = «доводилось»','ため':'ради, для','たち':'(множ. число людей)','さん':'вежливый суффикс (господин/госпожа)','ごろ':'около (о времени)','そう':'похоже, выглядит (〜そう)','だ':'есть (простая связка)','だった':'был (простая связка, прошед.)','です':'есть (вежливая связка)','でした':'был (вежливая связка, прошед.)','でしょう':'наверное, …ведь (предположение)','じゃ':'ну / (じゃない = не является)','ない':'не (отрицание)','なかった':'не был (отриц., прошед.)',
+// helper verbs
+'あります':'есть, имеется','ありません':'нет, не имеется','ありました':'был, имелся','ある':'есть, имеется','あったら':'если есть','います':'находиться (о живом); 〜ています = «сейчас делаю / состояние»','いました':'находился; 〜ていました = «делал (длилось)»','いません':'нет (о живом); 〜ていません = «ещё не сделал»','いる':'находиться; 〜ている = процесс/состояние','いて':'находясь; 待[ま]っていて = «жди(те)»','いましょう':'давайте будем (находиться)',
+'ください':'пожалуйста (〜てください = «сделайте»)','くれる':'сделать для меня (〜てくれる)','します':'делать','しました':'сделал','しません':'не делаю','した':'сделал','したい':'хочу сделать','して':'делая; сделайте','しないで':'не делайте','しよう':'давай сделаю / собираюсь сделать','する':'делать','すれば':'если делать','しまいました':'(〜てしまった) — сделал, к сожалению / полностью','しまいます':'(〜てしまう) — нечаянно делаю','みて':'попробовать (〜てみる)','みたい':'хочу попробовать (〜てみたい)','みます':'попробую (〜てみる)','みよう':'давай попробуем','きた':'стало (〜てきた: изменение)','きました':'стало / начало (〜てきた: изменение)','なって':'становясь (〜くなって)','なりました':'стал(о)','なります':'становится, станет','なりません':'не становится','やって':'делая; やってみる = «попробовать»','やりましょう':'давайте сделаем','やむ':'прекращаться (о дожде)','ございます':'(очень вежл.) есть; ありがとうございます = «большое спасибо»','できます':'мочь, уметь; 〜ができる = «уметь (что-то)»',
+// kana words
+'あなた':'ты, вы','あの':'тот (вдали)','この':'этот','その':'тот (о чём говорили)','これ':'это','ここ':'здесь','そこ':'там (рядом)','こんな':'такой (как этот)','どう':'как?','どうぞ':'пожалуйста (предлагая)','いい':'хороший','いいえ':'нет','いくら':'сколько стоит?','いちご':'клубника','いつも':'всегда','うれしい':'радостный, рад','うれしかった':'был рад','うーん':'хм…','おいしい':'вкусный','かっこいい':'крутой, классный','がんばって':'держись! старайся!','がんばります':'постараюсь','きれい':'красивый; чистый','すし':'суши','すみません':'извините','たくさん':'много','たこ焼き':'такояки (шарики с осьминогом)','だめ':'нельзя, плохо','つまらなかった':'было скучно','みかん':'мандарин','みんな':'все','よく':'хорошо; часто','りんご':'яблоко','ありがとう':'спасибо','ちょっと':'немного','まず':'сначала','また':'снова','まだ':'ещё','もう':'уже; ещё','ゆっくり':'медленно, спокойно',
+// katakana
+'アニメ':'аниме','アルバイト':'подработка','イタリア':'Италия','カメラ':'фотоаппарат','ケーキ':'торт','ゲーム':'игра','コンビニ':'круглосуточный магазин','コーヒー':'кофе','サイズ':'размер','シャワー':'душ','ジブリ':'студия Гибли','ジョギング':'пробежка','スキー':'лыжи','スポーツ':'спорт','スマホ':'смартфон','タバコ':'сигареты','テレビ':'телевизор','ドア':'дверь','バス':'автобус','パン':'хлеб','パーティー':'вечеринка','プレゼント':'подарок','ベルト':'ремень','ホテル':'отель','ラーメン':'рамен',
+// kanji words (also used as prefix for conjugated forms)
+'お会計':'счёт (к оплате)','お湯':'кипяток, горячая вода','お腹':'живот','お酒':'алкоголь; сакэ','お金':'деньги','お願い':'просьба; お願[ねが]いします = «пожалуйста»','お風呂':'ванна (японская)','ご飯':'еда; варёный рис','一つ':'один (предмет)','一人':'один человек; одному','一度':'один раз','一緒':'вместе','上手':'умелый, хорошо получается','下手':'неумелый, плохо получается','京都':'Киото','人':'человек, люди','今年':'этот год','今度':'в следующий раз','今日':'сегодня','今':'сейчас','仕事':'работа','休み':'выходной; отдых','休':'отдыхать; пропускать (休[やす]む)','会議':'совещание','会':'встречаться (会[あ]う)','何':'что?','使':'использовать, тратить (使[つか]う)','働':'работать (働[はたら]く)','優しい':'добрый, мягкий','元気':'здоровый, бодрый','先生':'учитель','入':'класть, добавлять (入[い]れる)','全然':'совсем (не)','冬':'зима','出身':'родом из','出':'выходить; брать трубку (出[で]る)','分':'понимать (分[わ]かる)','切':'резать (切[き]る)','前':'перед; раньше','勉強':'учёба, занятия','勝':'побеждать (勝[か]つ)','去年':'прошлый год','友達':'друг','受':'сдавать (экзамен) (受[う]ける)','合格':'сдача экзамена, прохождение','同じ':'одинаковый, тот же','名前':'имя','君':'ты (неформально)','問題':'задача; проблема','喜':'радоваться (喜[よろこ]ぶ)','図書館':'библиотека','土曜日':'суббота','塩':'соль','増':'увеличиваться (増[ふ]える)','声':'голос','夏':'лето','多':'много (多[おお]い)','夜':'вечер, ночь','夢':'сон, мечта','大きい':'большой','大丈夫':'в порядке, ничего страшного','大変':'тяжело, ужасно','大好き':'обожать','大阪':'Осака','天気':'погода','好き':'нравиться, любить','妹':'младшая сестра','始':'начинать(ся) (始[はじ]める・始[はじ]まる)','嫌':'неприятно, не хочется','子供':'ребёнок','学校':'школа','安':'дешёвый (安[やす]い)','家':'дом','宿題':'домашнее задание','富士山':'гора Фудзи','寒':'холодный (寒[さむ]い)','寝':'спать, ложиться спать (寝[ね]る)','帰':'возвращаться домой (帰[かえ]る)','店':'магазин; заведение','座':'сидеть (座[すわ]る)','引っ越して':'переехав (引[ひ]っ越[こ]す)','弟':'младший брат','強':'сильный (強[つよ]い)','彼女':'она; девушка','彼':'он','待':'ждать (待[ま]つ)','心配':'беспокойство','忘':'забывать (忘[わす]れる)','忙':'занятый (忙[いそが]しい)','怒':'злиться (怒[おこ]る)','思':'думать (思[おも]う)','慣':'привыкать (慣[な]れる)','手伝':'помогать (手伝[てつだ]う)','手':'рука','授業':'урок, занятие','料理':'блюдо; кухня; готовка','新幹線':'синкансэн (скоростной поезд)','新':'новый (新[あたら]しい)','旅行':'путешествие','日曜日':'воскресенье','日本料理':'японская кухня','日本語':'японский язык','日本':'Япония','日':'день','早':'рано; быстро (早[はや]い)','明日':'завтра','映画':'фильм; кино','春':'весна','昨日':'вчера','時間':'время','時':'время, когда…; час','晴':'проясняться (晴[は]れる)','暑':'жаркий (暑[あつ]い, о погоде)','暖':'тёплый (暖[あたた]かい)','暗':'тёмный (暗[くら]い)','書':'писать (書[か]く)','月曜日':'понедельник','有名':'знаменитый','服':'одежда','朝ご飯':'завтрак','朝':'утро','本当':'правда','本':'книга','来年':'следующий год','来月':'следующий месяц','来':'приходить (来[く]る)','東京':'Токио','果物':'фрукты','楽':'весёлый, приятный (楽[たの]しい)','次':'следующий','歌手':'певец','歌':'песня','止':'останавливаться (止[と]まる)','歩':'ходить пешком (歩[ある]く)','毎日':'каждый день','泣':'плакать (泣[な]く)','洗':'мыть (洗[あら]う)','浴':'принимать (душ) (浴[あ]びる)','海':'море','消':'гаснуть (消[き]える)','混':'быть переполненным (混[こ]む)','渋谷':'Сибуя (район Токио)','温度':'температура','漢字':'кандзи, иероглифы','無料':'бесплатно','焼':'жарить (焼[や]く)','熱':'горячий (熱[あつ]い, о предмете)','片付':'убирать, наводить порядок (片付[かたづ]ける)','物':'вещь','田中':'Танака (фамилия)','町':'город, городок','番':'номер; очередь','疲':'уставать (疲[つか]れる)','痛':'больно (痛[いた]い)','眠':'сонный; спать (眠[ねむ]い・眠[ねむ]る)','着':'прибывать (着[つ]く)','確認':'проверка','私':'я','空':'небо','答え':'ответ','簡単':'простой, лёгкий','納豆':'натто (ферментированные соевые бобы)','終':'заканчиваться (終[お]わる)','結婚':'свадьба, брак','絵':'рисунок, картина','締':'затягивать, пристёгивать (締[し]める)','練習':'тренировка, практика','美味しい':'вкусный','聞':'слушать; спрашивать (聞[き]く)','肉':'мясо','脱':'снимать (обувь, одежду) (脱[ぬ]ぐ)','自己紹介':'самопредставление','若':'молодой (若[わか]い)','苦手':'не нравится; плохо даётся','英語':'английский язык','落':'падать; проваливать (落[お]ちる)','薬':'лекарство','行':'идти, ехать (行[い]く)','見':'смотреть, видеть (見[み]る・見[み]える)','覚':'запоминать; помнить (覚[おぼ]える)','言葉':'слово','言':'говорить, сказать (言[い]う)','試験':'экзамен','話':'разговор, история; говорить (話[はな]す)','誕生日':'день рождения','説明':'объяснение','読':'читать (読[よ]む)','誰':'кто','調':'искать, выяснять (調[しら]べる)','謝':'извиняться (謝[あやま]る)','財布':'кошелёк','貯':'копить (貯[た]める)','買':'покупать (買[か]う)','質問':'вопрос','走':'бегать (走[はし]る)','起':'вставать, просыпаться (起[お]きる)','車':'машина','近く':'рядом, поблизости','速':'быстрый (速[はや]い)','週末':'выходные','遅刻':'опоздание','遊':'играть, развлекаться; 遊[あそ]びに来[く]る = «прийти в гости»','運動':'спорт, физические упражнения','道':'дорога','遠':'далёкий (遠[とお]い)','遠慮':'стеснение, скромность','部屋':'комната','野菜':'овощи','閉':'закрывать (閉[し]める)','開':'открываться; 開[あ]いている = «открыт, работает»','間違い':'ошибка','間':'промежуток; 〜の間[あいだ] = «во время…»','降':'идти (о дожде/снеге) / спускаться, выходить (из транспорта)','階段':'лестница','難':'трудный (難[むずか]しい)','雨':'дождь','雪':'снег','電気':'свет, электричество','電話':'телефон; звонок','電車':'электричка, поезд','静か':'тихий','面白':'интересный (面白[おもしろ]い)','靴':'обувь','食べ物':'еда','食':'есть, кушать (食[た]べる)','飲':'пить (飲[の]む)','駅':'станция','高':'дорогой; высокий (高[たか]い)','鳴':'звенеть (鳴[な]る)','円':'иен(а)','月':'месяц (5月[がつ] = май)'
+};
+
+</script>
+<script>
+(function(){
+'use strict';
+const $=s=>document.querySelector(s), app=$('#app');
+const KANJI=/[一-鿿々]/;
+const RUBY=/([一-鿿々]+)\[([^\]]+)\]/g;
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const ruby=s=>esc(s).replace(RUBY,'<ruby>$1<rt>$2</rt></ruby>');
+const plain=s=>s.replace(/\[[^\]]*\]/g,'');
+const reading=s=>s.replace(RUBY,'$2');
+const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
+const pickW=(arr,wf)=>{const ws=arr.map(wf),t=ws.reduce((a,b)=>a+b,0);let r=Math.random()*t;for(let i=0;i<arr.length;i++){r-=ws[i];if(r<=0)return arr[i]}return arr[arr.length-1]};
+const BY={};CARDS.forEach(c=>BY[c.id]=c);
+const clashOf=id=>{const g=CLASH.find(g=>g.includes(id));return g||[]};
+const PUNCT=/^[、。！？「」…]+$/;
+
+/* ---------- state ---------- */
+const KEY='fukushi-dojo-v1';
+let S={sel:[1],m:{},xp:0,sound:true,furi:true,streak:0,last:'',best:0};
+try{const s=JSON.parse(localStorage.getItem(KEY)||'null');if(s)S=Object.assign(S,s)}catch(e){}
+const save=()=>{try{localStorage.setItem(KEY,JSON.stringify(S))}catch(e){}};
+const M=id=>S.m[id]||0;
+function bump(id,d){S.m[id]=Math.max(0,Math.min(5,M(id)+d));if(d>0)S.xp+=10;dayTick();save();topbar()}
+function dayTick(){const d=new Date(),t=d.toISOString().slice(0,10);if(S.last===t)return;const y=new Date(d-864e5).toISOString().slice(0,10);S.streak=S.last===y?S.streak+1:1;S.last=t}
+const pool=()=>CARDS.filter(c=>S.sel.includes(c.t));
+const inPool=id=>S.sel.includes(BY[id].t);
+
+/* ---------- examples ---------- */
+const EX=[];CARDS.forEach(c=>c.ex.forEach(l=>{const board=l[0]==='!';const [jp,ru,alt]=l.replace(/^!/,'').split('|');EX.push({card:c,jp,ru,alt:alt?alt.split(','):[],board,key:c.id+'|'+jp})}));
+const exOf=id=>EX.filter(e=>e.card.id===id);
+let recent=[];
+function pickEx(card,filter){let list=exOf(card.id).filter(e=>!recent.includes(e.key));if(filter)list=list.filter(filter);if(!list.length)list=exOf(card.id).filter(filter||(()=>true));if(!list.length)return null;const e=list[Math.random()*list.length|0];recent.push(e.key);if(recent.length>40)recent.shift();return e}
+
+/* ---------- glossary ---------- */
+const GK=Object.keys(GLOSS).sort((a,b)=>b.length-a.length);
+const CW={};CARDS.forEach(c=>{CW[plain(c.w)]=c;if(c.w2)CW[plain(c.w2)]=c});
+function gloss(k){
+  if(CW[k])return CW[k].ru;
+  const num=(k.match(/^\d+/)||[''])[0];let r=k.slice(num.length);
+  if(GLOSS[r])return (num?num+' — ':'')+GLOSS[r];
+  if(KANJI.test(r[0])||/^[おご]/.test(r)){for(const e of GK){if((KANJI.test(e[0])||/^[おご]/.test(e))&&r.startsWith(e))return (num?num+' — ':'')+GLOSS[e]}}
+  return null;
+}
+const slotForm=(tok,card)=>tok==='**'?card.w:tok.slice(1,-1);
+function sentHTML(jp,card,mode){ // mode: gap | fill | plain (no tooltips) | plaingap
+  return jp.split(' ').map(t=>{
+    if(!t)return'';
+    if(t==='**'||/^\*.+\*$/.test(t)){
+      if(mode==='gap'||mode==='plaingap')return '<span class="gap" aria-label="пропуск"></span>';
+      if(mode==='plain')return `<b class="hl">${ruby(slotForm(t,card))}</b>`;
+      const f=slotForm(t,card);return `<span class="slot" tabindex="0" data-r="${esc(reading(f))}" data-g="${esc(card.ru)}">${ruby(f)}</span>`;
+    }
+    if(PUNCT.test(t)||mode==='plain'||mode==='plaingap')return ruby(t);
+    const k=plain(t),g=gloss(k);
+    if(!g)return ruby(t);
+    return `<span class="tok" tabindex="0" data-r="${esc(reading(t))}" data-g="${esc(g)}">${ruby(t)}</span>`;
+  }).join('');
+}
+const spoken=(jp,card)=>jp.split(' ').map(t=>t==='**'||/^\*.+\*$/.test(t)?plain(slotForm(t,card)):plain(t)).join('');
+const wordHTML=c=>ruby(c.w)+(c.w2?' <span class="suf">/</span> '+ruby(c.w2):'')+(c.suf?`<span class="suf">${c.suf}</span>`:'');
+const wordShort=c=>ruby(c.w)+(c.suf?`<span class="suf">${c.suf}</span>`:'');
+
+/* ---------- tooltip ---------- */
+const tip=$('#tip');let tipEl=null;
+function showTip(el){
+  if(tipEl===el){hideTip();return}
+  tipEl=el;
+  const surf=el.querySelector('ruby')?Array.from(el.childNodes).map(n=>n.nodeName==='RUBY'?n.firstChild.textContent:n.textContent).join(''):el.textContent;
+  const rd=el.dataset.r;tip.innerHTML=`<span class="r">${esc(surf)}${rd!==surf?`<small>${esc(rd)}</small>`:''}</span>${ruby(el.dataset.g)}`;
+  const b=el.getBoundingClientRect();tip.classList.add('on');
+  const w=tip.offsetWidth,h=tip.offsetHeight;let x=b.left+b.width/2-w/2+scrollX;x=Math.max(8+scrollX,Math.min(x,scrollX+innerWidth-w-8));
+  let y=b.top+scrollY-h-8;if(b.top-h-8<0)y=b.bottom+scrollY+8;tip.style.left=x+'px';tip.style.top=y+'px';
+  snd('tick');
+}
+function hideTip(){tipEl=null;tip.classList.remove('on')}
+document.addEventListener('click',e=>{const t=e.target.closest('.tok,.slot');if(t){e.stopPropagation();showTip(t)}else hideTip()},true);
+document.addEventListener('keydown',e=>{if(e.key==='Enter'&&document.activeElement&&document.activeElement.matches('.tok,.slot')){showTip(document.activeElement)}});
+addEventListener('scroll',hideTip,{passive:true});addEventListener('resize',hideTip);
+
+/* ---------- sound ---------- */
+let AC=null;
+function snd(type){
+  if(!S.sound)return;
+  try{AC=AC||new (window.AudioContext||window.webkitAudioContext)();if(AC.state==='suspended')AC.resume();
+    const now=AC.currentTime;
+    const note=(f,t0,dur,vol,wave)=>{const o=AC.createOscillator(),g=AC.createGain(),fl=AC.createBiquadFilter();fl.type='lowpass';fl.frequency.value=2200;o.type=wave||'sine';o.frequency.setValueAtTime(f,now+t0);g.gain.setValueAtTime(0,now+t0);g.gain.linearRampToValueAtTime(vol,now+t0+.012);g.gain.exponentialRampToValueAtTime(.0001,now+t0+dur);o.connect(fl);fl.connect(g);g.connect(AC.destination);o.start(now+t0);o.stop(now+t0+dur+.02);return o};
+    if(type==='tap'){const o=note(620,0,.09,.05);o.frequency.exponentialRampToValueAtTime(420,now+.08)}
+    else if(type==='tick'){note(880,0,.05,.02)}
+    else if(type==='ok'){note(660,0,.18,.05,'triangle');note(990,.08,.26,.045,'triangle')}
+    else if(type==='no'){const o=note(330,0,.22,.045);o.frequency.exponentialRampToValueAtTime(240,now+.2)}
+    else if(type==='flip'){const o=note(400,0,.12,.03);o.frequency.exponentialRampToValueAtTime(700,now+.1)}
+    else if(type==='win'){[523,659,784,1046].forEach((f,i)=>note(f,i*.09,.3,.045,'triangle'))}
+  }catch(e){}
+}
+document.addEventListener('click',e=>{if(e.target.closest('button:not(.tok):not(.slot)'))snd('tap')});
+
+/* ---------- speech ---------- */
+const canSpeak='speechSynthesis' in window;
+let jaVoice=null;
+function pickVoice(){try{jaVoice=speechSynthesis.getVoices().find(v=>/^ja/i.test(v.lang))||null}catch(e){}}
+if(canSpeak){pickVoice();try{speechSynthesis.onvoiceschanged=pickVoice}catch(e){}}
+function say(text){if(!canSpeak)return;try{speechSynthesis.cancel();const u=new SpeechSynthesisUtterance(text);u.lang='ja-JP';if(jaVoice)u.voice=jaVoice;u.rate=.88;speechSynthesis.speak(u)}catch(e){}}
+const SPK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M16.5 8.5a5 5 0 0 1 0 7"/><path d="M19 6a8.5 8.5 0 0 1 0 12"/></svg>';
+const spkBtn=t=>canSpeak?`<button class="spk" data-say="${esc(t)}" aria-label="Послушать" title="Послушать">${SPK}</button>`:'';
+document.addEventListener('click',e=>{const b=e.target.closest('[data-say]');if(b)say(b.dataset.say)});
+
+/* ---------- toast ---------- */
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),1800)}
+
+/* ---------- mascot ---------- */
+function mascot(mood,cls){
+  const eyes=mood==='sad'?'<path d="M44 58q5 -4 10 0M66 58q5 -4 10 0" stroke="#3A3F4C" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    :mood==='joy'?'<path d="M43 60q6 -9 12 0M65 60q6 -9 12 0" stroke="#3A3F4C" stroke-width="4" fill="none" stroke-linecap="round"/>'
+    :'<circle cx="49" cy="58" r="5" fill="#3A3F4C"/><circle cx="71" cy="58" r="5" fill="#3A3F4C"/><circle cx="51" cy="56" r="1.6" fill="#fff"/><circle cx="73" cy="56" r="1.6" fill="#fff"/>';
+  const mouth=mood==='sad'?'<path d="M53 76q7 -5 14 0" stroke="#3A3F4C" stroke-width="3.5" fill="none" stroke-linecap="round"/>':'<path d="M52 71q8 9 16 0" stroke="#3A3F4C" stroke-width="3.5" fill="#FF7A9C" stroke-linecap="round"/>';
+  return `<svg class="mascot ${cls||''}" viewBox="0 0 120 120" aria-hidden="true">
+   <ellipse cx="60" cy="110" rx="34" ry="5" fill="#000" opacity=".12"/>
+   <path d="M60 12c10 0 16 8 24 22l20 36c8 14 2 34-18 34H34C14 104 8 84 16 70l20-36C44 20 50 12 60 12z" fill="#FFFFFF" stroke="#3A3F4C" stroke-width="4" stroke-linejoin="round"/>
+   <path d="M30 84h60v20H34c-6 0-11-3-13-8z" fill="#263238"/><path d="M30 84h60v20H34c-6 0-11-3-13-8" fill="none" stroke="#3A3F4C" stroke-width="4" stroke-linejoin="round"/>
+   <rect x="52" y="88" width="16" height="10" rx="3" fill="#FF3D7F"/>
+   ${eyes}<circle cx="38" cy="68" r="6" fill="#FFB3C7"/><circle cx="82" cy="68" r="6" fill="#FFB3C7"/>${mouth}
+   <circle cx="60" cy="28" r="4" fill="#FFC23D" stroke="#3A3F4C" stroke-width="2"/>
+  </svg>`;
+}
+
+/* ---------- icons ---------- */
+const IC={
+ book:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 5a2 2 0 0 1 2-2h6v17H6a2 2 0 0 0-2 2z"/><path d="M20 5a2 2 0 0 0-2-2h-6v17h6a2 2 0 0 1 2 2z"/></svg>',
+ cards:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><rect x="3" y="6" width="13" height="15" rx="3"/><path d="M8 3h10a3 3 0 0 1 3 3v11"/></svg>',
+ gap:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><path d="M3 12h3M18 12h3"/><rect x="8" y="7" width="8" height="10" rx="2" stroke-dasharray="3 2.4"/></svg>',
+ split:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3v18"/><path d="M8 8l-4 4 4 4M16 8l4 4-4 4"/></svg>',
+ build:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linejoin="round"><rect x="3" y="4" width="8" height="6" rx="2"/><rect x="13" y="4" width="8" height="6" rx="2"/><rect x="6" y="14" width="12" height="6" rx="2"/></svg>',
+ match:'<svg viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.4" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="18" cy="18" r="3"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="6" r="3"/><path d="M9 6h6M9 18h6"/></svg>',
+ bolt:'<svg viewBox="0 0 24 24" fill="#fff" stroke="#3A3F4C" stroke-width="1.6" stroke-linejoin="round"><path d="M13 2L4 14h7l-1 8 9-12h-7z"/></svg>',
+ check:'<svg viewBox="0 0 24 24" fill="none" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5 9-10"/></svg>',
+ sndOn:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9a4 4 0 0 1 0 6"/></svg>',
+ sndOff:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M4 9h4l5-4v14l-5-4H4z"/><path d="M17 9l5 6M22 9l-5 6"/></svg>'
+};
+
+/* ---------- top bar ---------- */
+function topbar(){
+  $('#xp').innerHTML=`<span style="color:var(--sun)">★</span> ${S.xp} XP`;
+  $('#streak').innerHTML=`<span style="color:var(--pop)">●</span> ${S.streak||0}<span class="long"> ${plural(S.streak||0,['день','дня','дней'])} подряд</span><span class="short"> дн.</span>`;
+  $('#sndBtn').innerHTML=S.sound?IC.sndOn:IC.sndOff;$('#sndBtn').classList.toggle('off',!S.sound);
+  $('#furiBtn').classList.toggle('off',!S.furi);document.body.classList.toggle('nofuri',!S.furi);
+}
+function plural(n,f){n=Math.abs(n)%100;const a=n%10;if(n>10&&n<20)return f[2];if(a>1&&a<5)return f[1];if(a===1)return f[0];return f[2]}
+$('#sndBtn').onclick=()=>{S.sound=!S.sound;save();topbar();if(S.sound)snd('ok')};
+$('#furiBtn').onclick=()=>{S.furi=!S.furi;save();topbar();toast(S.furi?'Фуригана включена':'Фуригана скрыта — проверь себя!')};
+$('#home').onclick=()=>home();
+
+/* ---------- home ---------- */
+const MODES=[
+ {k:'study',n:'Изучить',d:'Карточки-шпаргалки: смысл, нюансы, все примеры с озвучкой.',ic:'book',c:'var(--t3)'},
+ {k:'flash',n:'Флеш-карточки',d:'Вспомни значение. Слабые слова возвращаются чаще.',ic:'cards',c:'var(--t2)'},
+ {k:'fill',n:'Контекст',d:'Вставь наречие в живую фразу. Фразы каждый раз новые.',ic:'gap',c:'var(--t5)'},
+ {k:'pairs',n:'Не путай!',d:'Похожие слова лицом к лицу: もう и まだ, たぶん и きっと…',ic:'split',c:'var(--t4)'},
+ {k:'build',n:'Собери фразу',d:'Сложи предложение из кусочков — наречие на своё место.',ic:'build',c:'var(--t6)'},
+ {k:'match',n:'Найди пару',d:'Соедини слово со значением, потом — с ситуацией.',ic:'match',c:'var(--t1)'},
+ {k:'blitz',n:'Блиц 60 секунд',d:'Сколько успеешь за минуту? Серии правильных ответов умножают очки.',ic:'bolt',c:'var(--sun)',wide:1}
+];
+function home(keep,popT){
+  hideTip();stopBlitz();const y=scrollY;
+  const p=pool(),pct=Math.round(p.reduce((a,c)=>a+M(c.id),0)/(Math.max(1,p.length)*5)*100);
+  const selNames=S.sel.slice().sort((a,b)=>a-b);
+  app.innerHTML=`
+  <section class="hero">
+    <div class="bob">${mascot(pct>70?'joy':'')}</div>
+    <div>
+      <h1>Учим <span class="jp">${ruby('副詞[ふくし]')}</span> без зубрёжки</h1>
+      <p class="lead">Выбери таблички, которые вы уже прошли на уроке, и тренируйся. Нажми на любое японское слово в предложении — появится перевод.</p>
+      <div class="now">${p.length?`<span class="pill">${p.length} ${plural(p.length,['слово','слова','слов'])}</span><span class="pill">Таблички: ${selNames.join(', ')}</span><span class="pill">Освоено ${pct}%</span>`:'<span class="pill">Выбери хотя бы одну табличку ↓</span>'}</div>
+    </div>
+  </section>
+
+  <div class="sechead">
+    <div><h2 class="sec">Таблички</h2><p>Нажми, чтобы включить или выключить. Задания сразу подстроятся.</p></div>
+    <div class="chips"><span class="label">Пройдено до:</span>${TABLES.map(t=>`<button class="chip num" data-upto="${t.n}">${t.n}</button>`).join('')}<button class="chip" data-all>Все</button></div>
+  </div>
+  <div class="tables">${TABLES.map(t=>{
+    const cs=CARDS.filter(c=>c.t===t.n),m=Math.round(cs.reduce((a,c)=>a+M(c.id),0)/(cs.length*5)*100),on=S.sel.includes(t.n);
+    return `<button class="tcard ${on?'on':''}" style="--c:var(--t${t.n})" data-t="${t.n}" aria-pressed="${on}">
+      <span class="tab">${t.n}</span><span class="check">${IC.check}</span>
+      <h3>${esc(t.name)}</h3>
+      <div class="words">${cs.map(c=>`<span>${ruby(c.w)}</span>`).join('')}</div>
+      <div class="meta"><span>${cs.length} ${plural(cs.length,['слово','слова','слов'])}</span><span>${m}%</span></div>
+      <div class="bar"><i style="width:${m}%"></i></div></button>`}).join('')}
+  </div>
+
+  <div class="sechead"><div><h2 class="sec">Тренировки</h2><p>Лучше идти по порядку: сначала понять, потом вспомнить, потом применить.</p></div></div>
+  <div class="modes">${MODES.map((m,i)=>`<button class="mode ${m.wide?'wide':''}" style="--c:${m.c}" data-mode="${m.k}" ${p.length?'':'disabled'}>
+     <span class="ic">${IC[m.ic]}</span><span class="step">шаг ${i+1}</span><div><h3>${m.n}</h3><p>${m.d}</p></div></button>`).join('')}</div>
+  <div class="hint"><b>Совет для запоминания:</b> 10–15 минут каждый день работают лучше, чем час раз в неделю. Начинай с «Флеш-карточек», пока все слова не станут зелёными, затем «Контекст» и «Не путай!». Ошибки — это хорошо: слово, в котором ошибся, игра покажет тебе снова.</div>`;
+  app.querySelectorAll('.tcard').forEach(b=>b.onclick=()=>{const n=+b.dataset.t;S.sel=S.sel.includes(n)?S.sel.filter(x=>x!==n):[...S.sel,n];save();home(true,[n])});
+  app.querySelectorAll('[data-upto]').forEach(b=>b.onclick=()=>{S.sel=TABLES.filter(t=>t.n<=+b.dataset.upto).map(t=>t.n);save();home(true,S.sel)});
+  app.querySelector('[data-all]').onclick=()=>{S.sel=TABLES.map(t=>t.n);save();home(true,S.sel)};
+  (popT||[]).forEach(n=>{const el=app.querySelector(`.tcard[data-t="${n}"]`);if(el)el.classList.add('toggled')});
+  app.querySelectorAll('[data-mode]').forEach(b=>b.onclick=()=>({study,flash,fill,pairs,build,match,blitz})[b.dataset.mode]());
+  if(keep)scrollTo(0,y);else scrollTo(0,0);
+}
+
+/* ---------- shell ---------- */
+function shell(title,inner,prog){
+  app.innerHTML=`<div class="playbar"><button class="btn sm" id="back">← Домой</button>${prog!=null?`<div class="prog"><i style="width:${prog}%"></i></div>`:`<h2 class="sec" style="flex:1">${title}</h2>`}<span class="pill" id="sc"></span></div><div class="stage">${inner}</div>`;
+  $('#back').onclick=home;
+}
+const setProg=p=>{const i=app.querySelector('.prog i');if(i)i.style.width=p+'%'};
+const setSc=t=>{const s=$('#sc');if(s)s.innerHTML=t};
+
+/* ---------- options / distractors ---------- */
+function distractors(card,alt,n){
+  const ex=new Set([card.id,...alt,...clashOf(card.id)]);
+  const cand=pool().filter(c=>!ex.has(c.id));
+  const near=shuffle(cand.filter(c=>(card.vs||[]).includes(c.id)||(c.vs||[]).includes(card.id)));
+  const rest=shuffle(cand.filter(c=>!near.includes(c)));
+  let out=[...near.slice(0,Math.ceil(n/2)),...rest].slice(0,n);
+  if(out.length<n){out=[...out,...near.slice(Math.ceil(n/2))].slice(0,n)}
+  if(out.length<1){out=shuffle(CARDS.filter(c=>!ex.has(c.id))).slice(0,n)}
+  return out;
+}
+const pickCard=(list)=>pickW(list||pool(),c=>6-M(c.id));
+
+/* ---------- STUDY ---------- */
+function study(){
+  const p=pool();
+  shell('Изучить',`<div class="studyhead"><span class="label" style="align-self:center">Нажми на слово в примере — увидишь перевод. ${canSpeak?'Кнопка со звуком читает фразу.':''}</span></div>
+   ${TABLES.filter(t=>S.sel.includes(t.n)).map(t=>`<section class="tgroup" style="--c:var(--t${t.n})"><h3><i></i>Табличка ${t.n} · ${esc(t.name)}</h3><div class="scards">${p.filter(c=>c.t===t.n).map(scard).join('')}</div></section>`).join('')}`);
+  app.querySelector('.stage').style.maxWidth='1060px';
+  setSc(`${p.length} ${plural(p.length,['слово','слова','слов'])}`);
+  app.querySelectorAll('[data-more]').forEach(b=>b.onclick=()=>{const id=b.dataset.more,ul=b.previousElementSibling;ul.innerHTML=exOf(id).map(exLi).join('');b.remove()});
+  app.querySelectorAll('[data-go]').forEach(b=>b.onclick=()=>{const el=document.getElementById('c-'+b.dataset.go);if(el){el.scrollIntoView({behavior:'smooth',block:'center'});el.classList.remove('flash-target');void el.offsetWidth;el.classList.add('flash-target')}else toast('Это слово из другой таблички — включи её на главной')});
+}
+const exLi=e=>`<li>${spkBtn(spoken(e.jp,e.card))}<div class="tx"><div class="sent sm" style="--c:var(--t${e.card.t})">${sentHTML(e.jp,e.card,'fill')}</div><div class="ru">${esc(e.ru)}${e.board?'<span class="badge">с доски</span>':''}</div></div></li>`;
+function scard(c){
+  const ex=exOf(c.id),first=[...ex.filter(e=>e.board),...ex.filter(e=>!e.board)].slice(0,3);
+  return `<article class="scard" id="c-${c.id}" style="--c:var(--t${c.t})">
+   <div class="head">${spkBtn(plain(c.w))}<div style="min-width:0"><div class="w">${wordHTML(c)}</div><div class="m">${esc(c.ru)}</div><div class="dots">${[1,2,3,4,5].map(i=>`<i class="${M(c.id)>=i?'f':''}"></i>`).join('')}</div></div></div>
+   <div class="body"><p class="note">${ruby(c.note)}</p>
+   ${c.vs&&c.vs.length?`<div class="vs">Не путай с: ${c.vs.map(v=>`<button data-go="${v}">${ruby(BY[v].w)}</button>`).join('')}</div>`:''}
+   <ul class="exl">${first.map(exLi).join('')}</ul>${ex.length>3?`<button class="btn sm more" data-more="${c.id}">Ещё ${ex.length-3} ${plural(ex.length-3,['пример','примера','примеров'])}</button>`:''}</div></article>`;
+}
+
+/* ---------- FLASH ---------- */
+function flash(){
+  let dir='jp';
+  const start=()=>{
+    const p=pool();let q=shuffle(p).sort((a,b)=>M(a.id)-M(b.id)).slice(0,12);q=shuffle(q.slice(0,8)).concat(q.slice(8));
+    const total=q.length;let known=0,miss=[];
+    const next=()=>{
+      if(!q.length)return result('Карточки пройдены!',known,total,miss,flash);
+      const c=q[0],e=pickEx(c);
+      setProg(Math.round((total-q.length)/total*100));setSc(`${total-q.length}/${total}`);
+      const front=dir==='jp'?`<div class="big">${wordHTML(c)}</div>`:`<div class="big ru">${esc(c.ru)}</div><div class="sent md">${sentHTML(e.jp,c,'gap')}</div>`;
+      app.querySelector('.stage').innerHTML=`
+        <div class="row" style="justify-content:center;margin-bottom:14px"><button class="chip ${dir==='jp'?'on':''}" data-dir="jp">Японский → русский</button><button class="chip ${dir==='ru'?'on':''}" data-dir="ru">Русский → японский</button></div>
+        <div class="fc" style="--c:var(--t${c.t})"><div class="fc-in" id="fcin" tabindex="0" role="button" aria-label="Перевернуть карточку">
+          <div class="fc-face"><div class="fc-band"></div><span class="label">Табличка ${c.t}</span>${front}<span class="tap">Вспомни и нажми, чтобы перевернуть</span></div>
+          <div class="fc-face back"><div class="fc-band"></div>
+            <div class="row" style="margin-top:6px">${spkBtn(plain(c.w))}<div class="jp" style="font-size:30px;font-weight:800;line-height:1.7">${wordHTML(c)}</div></div>
+            <div style="font-family:var(--f-display);font-weight:700;font-size:19px;line-height:1.25">${esc(c.ru)}</div>
+            <p class="note" style="color:var(--muted)">${ruby(c.note)}</p>
+            <div style="border-top:2px dashed var(--soft);padding-top:10px" class="row">${spkBtn(spoken(e.jp,c))}<div style="min-width:0;flex:1"><div class="sent sm" style="--c:var(--t${c.t})">${sentHTML(e.jp,c,'fill')}</div><div class="ru">${esc(e.ru)}</div></div></div>
+          </div></div></div>
+        <div class="grade" id="grade" hidden>
+          <button class="btn g1" data-g="1">Не помню<small>покажу скоро</small></button>
+          <button class="btn g2" data-g="2">Почти<small>ещё раз позже</small></button>
+          <button class="btn g3" data-g="3">Знаю!<small>убрать</small></button></div>`;
+      app.querySelectorAll('[data-dir]').forEach(b=>b.onclick=()=>{dir=b.dataset.dir;next()});
+      const fc=app.querySelector('.fc'),flip=()=>{if(!fc.classList.contains('flip')){fc.classList.add('flip');snd('flip');$('#grade').hidden=false}};
+      $('#fcin').onclick=e=>{if(!e.target.closest('.tok,.slot,.spk'))flip()};$('#fcin').onkeydown=e=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();flip()}};
+      app.querySelectorAll('[data-g]').forEach(b=>b.onclick=()=>{
+        const g=+b.dataset.g;q.shift();
+        if(g===1){bump(c.id,-1);q.splice(Math.min(2,q.length),0,c);if(!miss.includes(c))miss.push(c)}
+        else if(g===2){q.push(c)}
+        else{bump(c.id,1);known++;snd('ok')}
+        next();
+      });
+    };
+    shell('',`<div></div>`,0);next();
+  };
+  start();
+}
+
+/* ---------- FILL (context) ---------- */
+function makeQ(nOpts){
+  const c=pickCard(),e=pickEx(c);const d=distractors(c,e.alt,nOpts-1);
+  return {c,e,opts:shuffle([c,...d])};
+}
+function fill(){
+  const N=10;let i=0,ok=0,miss=[];
+  shell('',`<div></div>`,0);
+  const next=()=>{
+    if(i>=N)return result('Контекст пройден!',ok,N,miss,fill);
+    const q=makeQ(4);setProg(i/N*100);setSc(`★ ${ok}`);
+    const st=app.querySelector('.stage');
+    st.innerHTML=`<div class="card pop" style="--c:var(--t${q.c.t})"><div class="qtag"><i></i>Какое наречие подходит? · ${i+1}/${N}</div>
+      <div class="sent">${sentHTML(q.e.jp,q.c,'gap')}</div><div class="ru">${esc(q.e.ru)}</div>
+      <div class="opts">${q.opts.map((o,k)=>`<button class="opt" data-id="${o.id}"><span class="k">${k+1}</span>${wordShort(o)}</button>`).join('')}</div><div id="fbx"></div></div>`;
+    const answer=id=>{
+      if(st.querySelector('.opt[disabled]'))return;
+      const right=id===q.c.id;st.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.dataset.id===q.c.id)b.classList.add('ok');else if(b.dataset.id===id)b.classList.add('no')});
+      if(right){ok++;bump(q.c.id,1);snd('ok')}else{bump(q.c.id,-1);snd('no');miss.push({e:q.e,picked:id});st.querySelector('.card').classList.add('shake')}
+      const pk=BY[id];
+      $('#fbx').innerHTML=`<div class="fb ${right?'ok':'no'}"><h4>${right?'Верно!':'Почти! Правильно:'} <span class="jw">${wordShort(q.c)}</span> — ${esc(q.c.ru)}</h4>
+        <div class="row">${spkBtn(spoken(q.e.jp,q.c))}<div class="sent md" style="margin:0;flex:1;min-width:0">${sentHTML(q.e.jp,q.c,'fill')}</div></div>
+        <p>${ruby(q.c.note)}</p>${right?'':`<p><b>Ты выбрал <span class="jw">${wordShort(pk)}</span></b> — это «${esc(pk.ru)}».</p>`}
+        <div class="row end"><button class="btn main" id="nx">Дальше →</button></div></div>`;
+      $('#nx').focus({preventScroll:true});$('#nx').onclick=()=>{i++;next()};
+      setSc(`★ ${ok}`);
+    };
+    st.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.id));
+    keyOpts=k=>{const b=st.querySelectorAll('.opt')[k];if(b&&!b.disabled)answer(b.dataset.id)};
+  };
+  next();
+}
+let keyOpts=null;
+document.addEventListener('keydown',e=>{if(/^[1-4]$/.test(e.key)&&keyOpts&&!e.target.closest('input'))keyOpts(+e.key-1)});
+
+/* ---------- PAIRS ---------- */
+function availPairs(){return PAIRS.map(p=>({p,ids:p.ids.filter(inPool),q:p.q.filter(q=>inPool(q.a))})).filter(x=>x.ids.length>=2&&x.q.length)}
+function pairs(){
+  const av=availPairs();
+  shell('Не путай!',av.length?`<p class="ru" style="margin:0 0 14px">Выбери пару похожих слов или пройди все подряд. Сначала прочитай правило — оно короткое.</p>
+    <div class="row" style="margin-bottom:14px"><button class="btn main" id="allp">Все пары вперемешку</button></div>
+    <div class="plist">${av.map((x,i)=>`<button class="pbtn" data-p="${i}"><b>${x.ids.map(id=>ruby(BY[id].w)).join(' · ')}</b><span>${ruby(x.p.rule.split('. ')[0])}.</span></button>`).join('')}</div>`
+    :`<div class="card empty">${mascot('sad','sm')}<p>В выбранных табличках нет похожих пар.<br>Включи ещё таблички (например, 5 и 7 или 8) — и здесь появятся задания.</p></div>`);
+  setSc(`${av.length} ${plural(av.length,['пара','пары','пар'])}`);
+  if(!av.length)return;
+  app.querySelectorAll('[data-p]').forEach(b=>b.onclick=()=>pairRun([av[+b.dataset.p]]));
+  $('#allp').onclick=()=>pairRun(av);
+}
+function pairRun(list){
+  let Q=[];list.forEach(x=>x.q.forEach(q=>Q.push({x,q})));Q=list.length===1?shuffle(Q):shuffle(Q).slice(0,12);
+  const N=Q.length;let i=0,ok=0,miss=[];
+  shell('',`<div></div>`,0);
+  const next=()=>{
+    if(i>=N)return result('Теперь не перепутаешь!',ok,N,miss,pairs);
+    const {x,q}=Q[i],c=BY[q.a];setProg(i/N*100);setSc(`★ ${ok}`);
+    const st=app.querySelector('.stage');
+    st.innerHTML=`<div class="rule"><b>${ruby(x.p.title)}</b>${ruby(x.p.rule)}</div>
+     <div class="card pop" style="--c:var(--t${c.t})"><div class="qtag"><i></i>Ситуация · ${i+1}/${N}</div><div class="ctx">${ruby(q.ctx)}</div>
+     <div class="sent">${sentHTML(q.s,c,'gap')}</div>
+     <div class="opts">${shuffle(x.ids).map((id,k)=>`<button class="opt" data-id="${id}"><span class="k">${k+1}</span>${wordShort(BY[id])}</button>`).join('')}</div><div id="fbx"></div></div>`;
+    const answer=id=>{
+      if(st.querySelector('.opt[disabled]'))return;
+      const right=id===q.a;st.querySelectorAll('.opt').forEach(b=>{b.disabled=true;if(b.dataset.id===q.a)b.classList.add('ok');else if(b.dataset.id===id)b.classList.add('no')});
+      if(right){ok++;bump(q.a,1);snd('ok')}else{bump(q.a,-1);snd('no');miss.push({e:{jp:q.s,ru:q.ctx,card:c},picked:id});st.querySelector('.card').classList.add('shake')}
+      $('#fbx').innerHTML=`<div class="fb ${right?'ok':'no'}"><h4>${right?'Точно!':'Здесь нужно'} <span class="jw">${wordShort(c)}</span></h4>
+        <div class="row">${spkBtn(spoken(q.s,c))}<div class="sent md" style="margin:0;flex:1;min-width:0">${sentHTML(q.s,c,'fill')}</div></div>
+        <p>${esc(c.ru)}. ${ruby(c.note)}</p><div class="row end"><button class="btn main" id="nx">Дальше →</button></div></div>`;
+      $('#nx').focus({preventScroll:true});$('#nx').onclick=()=>{i++;next()};setSc(`★ ${ok}`);
+    };
+    st.querySelectorAll('.opt').forEach(b=>b.onclick=()=>answer(b.dataset.id));
+    keyOpts=k=>{const b=st.querySelectorAll('.opt')[k];if(b&&!b.disabled)answer(b.dataset.id)};
+  };
+  next();
+}
+
+/* ---------- BUILD ---------- */
+const AUX=new Set('は が を に で へ と も の から まで より や ね よ か な では には なら けど ので ん です でした でしょう だ だった じゃ ない なかった います いました いません いる いて いましょう ください くれる きた きました みて みたい みます みよう しまいました しまいます ございます'.split(' '));
+function chunks(jp){
+  const out=[];jp.split(' ').forEach(t=>{
+    const isSlot=t==='**'||/^\*.+\*$/.test(t);const k=plain(t);
+    if(out.length&&!isSlot&&(PUNCT.test(k)||AUX.has(k)))out[out.length-1].t.push(t);
+    else out.push({t:[t],adv:isSlot});
+  });return out;
+}
+function buildable(e){if(/[「」]/.test(e.jp))return false;const n=chunks(e.jp).length;return n>=3&&n<=7}
+function build(){
+  const N=8;let i=0,ok=0,miss=[];
+  shell('',`<div></div>`,0);
+  const next=()=>{
+    if(i>=N)return result('Фразы собраны!',ok,N,miss,build);
+    const bl=pool().filter(c=>exOf(c.id).some(buildable));if(!bl.length)return result('Фразы собраны!',ok,i,miss,build);const c=pickCard(bl);const e=pickEx(c,buildable);
+    if(!e){i++;return next()}
+    const ch=chunks(e.jp).map((x,j)=>({...x,j,h:sentHTML(x.t.join(' '),c,'plain')}));
+    let order=shuffle(ch.map(x=>x.j));if(order.every((v,k)=>v===k))order=order.reverse();
+    const picked=[];setProg(i/N*100);setSc(`★ ${ok}`);
+    const st=app.querySelector('.stage');
+    st.innerHTML=`<div class="card pop" style="--c:var(--t${c.t})"><div class="qtag"><i></i>Собери фразу · ${i+1}/${N}</div>
+      <div class="ru" style="font-size:18px;color:var(--ink);font-weight:700">${esc(e.ru)}</div>
+      <div class="line" id="line"></div><div class="bank" id="bank">${order.map(j=>`<button class="chunk ${ch[j].adv?'adv':''}" data-j="${j}">${ch[j].h}</button>`).join('')}</div>
+      <div class="row end" style="margin-top:16px"><button class="btn" id="clr">Сбросить</button><button class="btn main" id="chk" disabled>Проверить</button></div><div id="fbx"></div></div>`;
+    const line=$('#line'),bank=$('#bank');
+    const draw=()=>{line.innerHTML=picked.map(j=>`<button class="chunk ${ch[j].adv?'adv':''}" data-u="${j}">${ch[j].h}</button>`).join('');
+      bank.querySelectorAll('.chunk').forEach(b=>b.classList.toggle('used',picked.includes(+b.dataset.j)));$('#chk').disabled=picked.length!==ch.length;
+      line.querySelectorAll('[data-u]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('.tok,.slot'))return;if(line.classList.contains('ok')||line.classList.contains('no'))return;picked.splice(picked.indexOf(+b.dataset.u),1);draw()})};
+    bank.querySelectorAll('.chunk').forEach(b=>b.onclick=ev=>{if(ev.target.closest('.tok,.slot'))return;const j=+b.dataset.j;if(!picked.includes(j)&&!line.className.match(/ok|no/)){picked.push(j);draw()}});
+    $('#clr').onclick=()=>{if(line.className.match(/ok|no/))return;picked.length=0;draw()};
+    $('#chk').onclick=()=>{
+      const exact=picked.every((v,k)=>v===k);
+      let flex=false;const aj=ch.findIndex(x=>x.adv);
+      if(!exact&&!e.jp.slice(0,-1).includes('。')&&ch[aj].t.length===1){const a=picked.filter(j=>j!==aj),b=ch.map(x=>x.j).filter(j=>j!==aj);flex=a.every((v,k)=>v===b[k])&&picked[picked.length-1]!==aj}
+      const right=exact||flex;line.classList.add(right?'ok':'no');
+      if(right){ok++;bump(c.id,1);snd('ok')}else{bump(c.id,-1);snd('no');miss.push({e,picked:null});st.querySelector('.card').classList.add('shake')}
+      $('#clr').disabled=true;$('#chk').disabled=true;
+      $('#fbx').innerHTML=`<div class="fb ${right?'ok':'no'}"><h4>${exact?'Идеально!':flex?'Тоже можно! Но чаще говорят так:':'Вот как правильно:'}</h4>
+       <div class="row">${spkBtn(spoken(e.jp,c))}<div class="sent md" style="margin:0;flex:1;min-width:0">${sentHTML(e.jp,c,'fill')}</div></div>
+       <p><span class="jw">${wordShort(c)}</span> — ${esc(c.ru)}</p><div class="row end"><button class="btn main" id="nx">Дальше →</button></div></div>`;
+      $('#nx').focus({preventScroll:true});$('#nx').onclick=()=>{i++;next()};setSc(`★ ${ok}`);
+    };
+    draw();
+  };
+  next();
+}
+
+/* ---------- MATCH ---------- */
+function match(){
+  const p=pool();const size=Math.min(5,p.length);const R=size<2?0:3;
+  if(!R){shell('Найди пару',`<div class="card empty">${mascot('sad','sm')}<p>Для этой игры нужно хотя бы 2 слова. Включи ещё табличку.</p></div>`);return}
+  let r=0,mist=0,found=0,missC=[];const t0=Date.now();
+  shell('',`<div></div>`,0);
+  const round=()=>{
+    if(r>=R){const sec=Math.round((Date.now()-t0)/1000);return result(`Все пары найдены за ${sec} с`,found,found+mist,missC,match,true)}
+    // pick set without near-synonyms together
+    const set=[];shuffle(p).sort((a,b)=>M(a.id)-M(b.id)+(Math.random()-.5)*3).forEach(c=>{if(set.length<size&&!set.some(s=>clashOf(s.id).includes(c.id)))set.push(c)});
+    const ctx=r>0;setProg(r/R*100);setSc(`раунд ${r+1}/${R}`);
+    const rights=shuffle(set.map(c=>{if(!ctx)return {id:c.id,h:`<b>${esc(c.ru)}</b>`};const e=pickEx(c,x=>!/[「」]/.test(x.jp))||pickEx(c);return {id:c.id,h:`<div class="sent sm" style="--c:var(--t${c.t})">${sentHTML(e.jp,c,'plaingap')}</div><div class="ru">${esc(e.ru)}</div>`}}));
+    const st=app.querySelector('.stage');
+    st.innerHTML=`<div class="qtag" style="--c:var(--pop)"><i></i>${ctx?'Слово ↔ ситуация':'Слово ↔ значение'}</div>
+      <div class="mgrid"><div class="mcol">${shuffle(set).map(c=>`<button class="mt jpw" data-l="${c.id}">${wordShort(c)}</button>`).join('')}</div>
+      <div class="mcol">${rights.map(x=>`<button class="mt" data-r="${x.id}">${x.h}</button>`).join('')}</div></div>`;
+    let L=null,Rr=null,left=set.length;
+    const tryM=()=>{if(!L||!Rr)return;
+      if(L.dataset.l===Rr.dataset.r){[L,Rr].forEach(b=>{b.classList.remove('sel');b.classList.add('done')});bump(L.dataset.l,1);found++;snd('ok');left--;
+        if(ctx){const tgt=Rr;const c=BY[L.dataset.l];setTimeout(()=>{tgt.querySelectorAll('.gap').forEach(g=>{g.outerHTML=`<span class="slot">${ruby(c.w)}</span>`})},120)}
+        if(!left)setTimeout(()=>{r++;round()},700)}
+      else{const a=L,b=Rr;[a,b].forEach(x=>x.classList.add('shake'));mist++;snd('no');const c=BY[a.dataset.l];if(!missC.find(m=>m.c===c))missC.push({c});bump(a.dataset.l,-1);setTimeout(()=>[a,b].forEach(x=>x.classList.remove('shake','sel')),380)}
+      L=Rr=null};
+    st.querySelectorAll('[data-l]').forEach(b=>b.onclick=()=>{st.querySelectorAll('[data-l]').forEach(x=>x.classList.remove('sel'));L=b;b.classList.add('sel');tryM()});
+    st.querySelectorAll('[data-r]').forEach(b=>b.onclick=ev=>{if(ev.target.closest('.tok'))return;st.querySelectorAll('[data-r]').forEach(x=>x.classList.remove('sel'));Rr=b;b.classList.add('sel');tryM()});
+  };
+  round();
+}
+
+/* ---------- BLITZ ---------- */
+let blitzT=null;function stopBlitz(){if(blitzT){clearInterval(blitzT);blitzT=null}}
+function blitz(){
+  const DUR=60;let left=DUR,score=0,combo=0,cnt=0,ok=0,miss=[],lock=false;
+  shell('',`<div class="card" style="text-align:center;display:grid;justify-items:center;gap:12px">${mascot('', 'bob')}
+    <h2 class="sec">Блиц: 60 секунд</h2><p class="ru" style="max-width:46ch;margin:0">Вставляй наречия как можно быстрее. Три верных ответа подряд — очки ×2, шесть — ×3. Ошибка сбрасывает серию.</p>
+    <p class="label">Рекорд: ${S.best||0}</p><button class="btn main" id="go">Поехали!</button></div>`,0);
+  setSc('★ 0');
+  $('#go').onclick=()=>{
+    const st=app.querySelector('.stage');
+    st.innerHTML=`<div class="timer"><svg class="tring" viewBox="0 0 64 64"><circle cx="32" cy="32" r="27" fill="none" stroke="var(--soft)" stroke-width="7"/><circle id="arc" cx="32" cy="32" r="27" fill="none" stroke="var(--pop)" stroke-width="7" stroke-linecap="round" transform="rotate(-90 32 32)" stroke-dasharray="169.6" stroke-dashoffset="0"/><text id="tl" x="32" y="41" text-anchor="middle">${DUR}</text></svg>
+      <span class="combo" id="cb"></span><span class="bigscore" id="bs">0</span></div><div id="bq"></div>`;
+    const q=()=>{
+      const x=makeQ(3);lock=false;
+      $('#bq').innerHTML=`<div class="card pop" style="--c:var(--t${x.c.t})"><div class="sent md">${sentHTML(x.e.jp,x.c,'gap')}</div><div class="ru">${esc(x.e.ru)}</div>
+        <div class="opts" style="grid-template-columns:repeat(3,minmax(0,1fr))">${x.opts.map((o,k)=>`<button class="opt" data-id="${o.id}"><span class="k">${k+1}</span>${wordShort(o)}</button>`).join('')}</div></div>`;
+      const ans=id=>{if(lock||!blitzT)return;lock=true;cnt++;const right=id===x.c.id;
+        $('#bq').querySelectorAll('.opt').forEach(b=>{if(b.dataset.id===x.c.id)b.classList.add('ok');else if(b.dataset.id===id)b.classList.add('no')});
+        if(right){combo++;ok++;const mult=1+Math.min(2,Math.floor(combo/3));score+=10*mult;bump(x.c.id,1);snd('ok')}else{combo=0;bump(x.c.id,-1);snd('no');miss.push({e:x.e,picked:id})}
+        $('#bs').textContent=score;$('#cb').textContent=combo>=3?`серия ${combo} · ×${1+Math.min(2,Math.floor(combo/3))}`:'';setSc(`★ ${score}`);
+        setTimeout(()=>{if(blitzT)q()},right?380:1300)};
+      $('#bq').querySelectorAll('.opt').forEach(b=>b.onclick=()=>ans(b.dataset.id));
+      keyOpts=k=>{const b=$('#bq').querySelectorAll('.opt')[k];if(b)ans(b.dataset.id)};
+    };
+    q();
+    blitzT=setInterval(()=>{left--;const a=$('#arc');if(!a){stopBlitz();return}a.setAttribute('stroke-dashoffset',169.6*(1-left/DUR));$('#tl').textContent=left;setProg((DUR-left)/DUR*100);
+      if(left<=0){stopBlitz();const rec=score>(S.best||0);if(rec){S.best=score;save()}result(rec?`Новый рекорд: ${score}!`:`Очки: ${score}`,ok,cnt,miss,blitz)}},1000);
+  };
+}
+
+/* ---------- RESULT ---------- */
+function result(title,ok,total,miss,again,matchMode){
+  stopBlitz();keyOpts=null;
+  const pct=total?ok/total:0;snd(pct>=.7?'win':'tap');setProg(100);
+  const items=matchMode?miss.map(m=>`<div class="it"><b class="jw jp" style="font-size:20px">${wordShort(m.c)}</b> — ${esc(m.c.ru)}</div>`)
+    :miss.map(m=>`<div class="it"><div class="row">${spkBtn(spoken(m.e.jp,m.e.card))}<div style="min-width:0;flex:1"><div class="sent sm" style="--c:var(--t${m.e.card.t})">${sentHTML(m.e.jp,m.e.card,'fill')}</div><div class="ru">${esc(m.e.ru)}</div>
+      ${m.picked?`<div class="ru" style="font-size:14px">Ты выбрал: <span class="jp">${ruby(BY[m.picked].w)}</span> (${esc(BY[m.picked].ru)})</div>`:''}</div></div></div>`);
+  app.querySelector('.stage').innerHTML=`<div class="card res pop">${mascot(pct>=.8?'joy':pct<.5?'sad':'')}
+    <h2>${esc(title)}</h2><div class="num">${ok}<span style="font-size:24px;color:var(--muted)"> / ${total}</span></div>
+    <p class="ru" style="margin:0">${pct>=.9?'Великолепно! Слова прочно сидят в голове.':pct>=.7?'Хорошо! Ещё пара кругов — и будет идеально.':pct>=.4?'Неплохо. Загляни в «Изучить» и повтори слабые слова.':'Ничего страшного: ошибки показывают, что повторить. Начни с «Флеш-карточек».'}</p>
+    ${items.length?`<div class="mist"><span class="label">Повтори эти фразы</span>${items.join('')}</div>`:''}
+    <div class="row" style="justify-content:center;margin-top:10px"><button class="btn" id="hm">На главную</button><button class="btn main" id="ag">Ещё раз</button></div></div>`;
+  $('#hm').onclick=home;$('#ag').onclick=again;scrollTo({top:0,behavior:'smooth'});
+}
+
+topbar();home();
+
+/* ---------- install as app ---------- */
+(function(){
+  const btn=$('#instBtn');let deferred=null;
+  const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+  if(standalone)return;
+  try{if(navigator.storage&&navigator.storage.persist)navigator.storage.persist()}catch(e){}
+  addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;btn.hidden=false});
+  addEventListener('appinstalled',()=>{btn.hidden=true;toast('Готово! Игра появилась на главном экране')});
+  const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream&&document.querySelector('link[rel="manifest"]');
+  if(ios)btn.hidden=false;
+  btn.onclick=async()=>{
+    if(deferred){deferred.prompt();try{await deferred.userChoice}catch(e){}deferred=null;btn.hidden=true;return}
+    const box=document.createElement('div');box.className='ios';
+    box.innerHTML='<b>Как установить на iPhone</b>Открой эту страницу в Safari, нажми кнопку «Поделиться» (квадрат со стрелкой вверх) и выбери «На экран Домой».<div class="row end"><button class="btn sm">Понятно</button></div>';
+    document.body.appendChild(box);box.querySelector('button').onclick=()=>box.remove();
+  };
+})();
+})();
+</script>
+
+<script>if('serviceWorker' in navigator){addEventListener('load',()=>navigator.serviceWorker.register('sw.js').catch(()=>{}))}</script>
+</body>
+</html>
